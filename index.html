@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Certificador Facturador — Android · KLAP</title>
+  <link rel="icon" href="assets/klap-logo.png" />
+  <link rel="stylesheet" href="css/styles.css?v=5" />
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <img class="klap-logo" src="assets/klap-logo.png" alt="KLAP" />
+      <div class="brand">
+        <span class="brand-name">Certificador Facturador</span>
+        <span class="brand-sub">Departamento Desarrollo Android · KLAP</span>
+      </div>
+    </div>
+
+    <div class="probar-box">
+      <button class="btn btn-probar auth" id="btnProbarAuth"><span class="ico">◈</span> Probar Ambiente (Con Auth)</button>
+      <button class="btn btn-probar noauth" id="btnProbarSinAuth"><span class="ico">◈</span> Probar Ambiente (Sin Auth)</button>
+      <button class="btn btn-probar dummys" id="btnProbarDummys" title="Cambia al ambiente DUMMYS (APIs mock del devtunnel) y prueba sus APIs"><span class="ico">◈</span> Probar Ambiente (Dummys)</button>
+      <label class="probar-opt" title="Si se activa, las pruebas de emisión envían el payload real y GENERAN DTE. Si no, envían body vacío (400 = API operativa).">
+        <input type="checkbox" id="chkEmisionReal" /> <span>Emisión real <b>(genera DTE)</b></span>
+      </label>
+      <div class="resumen" id="resumen" style="display:none"></div>
+      <button class="btn-informe" id="btnInforme" style="display:none" title="Vuelve a descargar el informe de la última prueba de ambiente">⭳ Descargar último informe</button>
+    </div>
+
+    <nav class="nav">
+      <ul class="nav-list" id="navList"></ul>
+    </nav>
+
+    <div class="hist-section">
+      <div class="nav-label">HISTORIAL <button class="btn-x" id="clearHist" title="Limpiar">✕</button></div>
+      <ul class="hist-list" id="histList"><li class="hist-empty">Sin solicitudes aún</li></ul>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <!-- TOP BAR -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <h1 class="page-title" id="apiTitle">—</h1>
+        <span class="group-badge" id="apiGroup">—</span>
+        <span class="auth-tag" id="authTag">—</span>
+      </div>
+      <div class="topbar-right">
+        <div class="env-selector">
+          <span class="env-dot" id="envDot"></span>
+          <select id="envSel">
+            <!-- opciones generadas desde ENVS (config.js) -->
+          </select>
+        </div>
+        <div class="status-ind" id="statusBar"><span class="status-dot"></span><span id="statusTxt">Listo</span></div>
+        <button class="btn-icon" id="btnEnvs" title="Ambientes y URLs">⚙</button>
+        <button class="btn-icon" id="themeToggle" title="Tema">☾</button>
+      </div>
+    </header>
+
+    <!-- REQUEST BAR (endpoint que se está probando) -->
+    <div class="request-bar">
+      <span class="rb-method" id="rbMethod">GET</span>
+      <span class="rb-url" id="rbUrl">—</span>
+      <span class="rb-tag" id="rbAuth">—</span>
+      <button class="btn-icon sm" id="rbCopy" title="Copiar URL">⧉</button>
+    </div>
+
+    <!-- TOKEN / PROXY BAR -->
+    <div class="config-bar">
+      <div class="cfg-field">
+        <label>Bearer Token <span class="token-meta" id="tokenMeta">sin token</span></label>
+        <div class="row">
+          <input type="password" id="tokenInput" placeholder="JWT — se reutiliza mientras siga vigente" />
+          <button class="btn-icon sm" id="tokenToggle" title="ver/ocultar">👁</button>
+          <button class="btn btn-ghost sm" id="btnLoginQuick">Login rápido</button>
+        </div>
+      </div>
+      <div class="cfg-field cfg-proxy">
+        <label>Proxy CORS <span class="dim">requerido para apiqa-cloud · <code>python proxy.py</code></span></label>
+        <input type="text" id="proxyInput" placeholder="http://localhost:8787  — vacío = directo" />
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+      <!-- LEFT: FORM -->
+      <section class="panel panel-left">
+        <div class="panel-head">
+          <span class="panel-title">Parámetros / datos precargados</span>
+          <span class="endpoint">
+            <span class="http-method" id="apiMethod">GET</span>
+            <span class="http-path" id="apiPath">—</span>
+          </span>
+        </div>
+
+        <div class="emit-warn" id="emitWarn" style="display:none">
+          ⚠ Esta API <b>genera un DTE real</b> en el ambiente. Úsala con criterio.
+        </div>
+
+        <div class="fields" id="fields"></div>
+
+        <div class="panel-actions">
+          <button class="btn btn-primary" id="btnExec"><span class="ico">▶</span> Ejecutar</button>
+          <button class="btn btn-ghost" id="btnReset"><span class="ico">⟳</span> Resetear</button>
+          <button class="btn btn-ghost" id="btnCopyReq">Copiar JSON</button>
+        </div>
+        <div class="url-preview"><span class="url-label">URL</span><span class="url-value" id="urlPreview">—</span></div>
+      </section>
+
+      <!-- RIGHT: JSON + RESPONSE -->
+      <section class="panel panel-right">
+        <div class="panel-head">
+          <span class="panel-title">Request JSON</span>
+          <button class="btn-sm" id="btnEditJson">✎ Editar</button>
+        </div>
+        <div class="json-wrap" id="jsonWrap">
+          <textarea id="jsonArea" spellcheck="false"></textarea>
+          <pre class="json-view" id="jsonView"></pre>
+        </div>
+
+        <div class="resp-head">
+          <span class="panel-title">Respuesta</span>
+          <div class="resp-meta" id="respMeta" style="display:none">
+            <span class="status-code" id="respCode">200</span>
+            <span class="resp-time" id="respTime">0ms</span>
+            <button class="btn-sm" id="btnCopyResp">Copiar</button>
+          </div>
+        </div>
+        <div class="resp-body" id="respBody">
+          <div class="resp-empty">▶ Ejecuta una solicitud para ver la respuesta</div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="toasts" id="toasts"></div>
+
+  <div class="modal" id="modal" style="display:none">
+    <div class="modal-card">
+      <div class="modal-head"><span id="modalTitle">Detalle</span><button id="modalClose">✕</button></div>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <!-- MODAL AMBIENTES / URLS -->
+  <div class="modal" id="envModal" style="display:none">
+    <div class="modal-card modal-wide">
+      <div class="modal-head">
+        <span>Ambientes y URLs</span>
+        <div class="modal-head-actions">
+          <button class="btn-sm" id="envReset">Restablecer todo</button>
+          <button id="envModalClose">✕</button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <p class="m-h">Bases por ambiente <span class="dim">(editables — afectan a todas las pruebas)</span></p>
+        <div class="env-table" id="envBases"></div>
+
+        <p class="m-h" style="margin-top:18px">URL por prueba <span class="dim">(editable — sobrescribe la URL de esa prueba en ese ambiente)</span></p>
+        <div class="env-table env-table-apis" id="envApis"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/config.js?v=5"></script>
+  <script src="js/app.js?v=5"></script>
+</body>
+</html>
