@@ -1,0 +1,3589 @@
+{
+  "info": {
+    "_postman_id": "ca199528-363a-4bbb-81fa-7f829005c83c",
+    "name": "DTE API Testing",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "QA",
+      "item": [
+        {
+          "name": "000 - Login QA (setea jwt)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://apiqa.mcdesaqa.cl/public/auth/web/v1/login"
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user\": \"{{loginUser}}\",\n  \"pass\": \"{{loginPass}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const b = pm.response.json();",
+                  "if (b.data && b.data.token) pm.collectionVariables.set('jwt', b.data.token);",
+                  "pm.test('token generado', () => pm.expect(b.code).to.eql(1));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "01 - Factura Tipo 33",
+          "item": [
+            {
+              "name": "001 - Happy Path",
+              "item": [
+                {
+                  "name": "F33H-001 minimo",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/v1/factura",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "factura"
+                      ]
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{jwt}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"rutEmisor\": \"{{rutEmisor}}\",\n  \"tipoDte\": 33,\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": 458,\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": 13101,\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"items\": [\n    {\n      \"numeroLinea\": 1,\n      \"nombreItem\": \"Servicio QA\",\n      \"cantidad\": 1,\n      \"precioUnitarioNeto\": 100000,\n      \"monto\": 100000\n    }\n  ],\n  \"montoNeto\": 100000,\n  \"montoIVA\": 19000,\n  \"montoTotal\": 119000\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                          "const b = pm.response.json();",
+                          "pm.test('codigoRespuesta 01', () => pm.expect(b.codigoRespuesta).to.eql('01'));",
+                          "pm.test('trae folio', () => pm.expect(b.datosDTE.folio).to.be.a('number'));",
+                          "if (b.datosDTE && b.datosDTE.folio) pm.collectionVariables.set('folioFactura', b.datosDTE.folio);"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "F33H-002 completo",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/v1/factura",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "factura"
+                      ]
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{jwt}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"rutEmisor\": \"{{rutEmisor}}\",\n  \"tipoDte\": 33,\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": 458,\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": 13101,\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"items\": [\n    {\n      \"numeroLinea\": 1,\n      \"nombreItem\": \"Consultoria\",\n      \"cantidad\": 10,\n      \"precioUnitarioNeto\": 50000,\n      \"monto\": 450000,\n      \"movimientoItem\": {\n        \"tipo\": \"D\",\n        \"tipoValor\": \"%\",\n        \"porcentaje\": 10,\n        \"monto\": 50000\n      }\n    },\n    {\n      \"numeroLinea\": 2,\n      \"nombreItem\": \"Licencia\",\n      \"cantidad\": 2,\n      \"precioUnitarioNeto\": 80000,\n      \"monto\": 160000\n    }\n  ],\n  \"montoNeto\": 610000,\n  \"montoIVA\": 115900,\n  \"montoTotal\": 725900,\n  \"movimientoGlobal\": {\n    \"tipoMovimiento\": \"D\",\n    \"tipoValor\": \"$\",\n    \"monto\": 25000\n  }\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                          "const b = pm.response.json();",
+                          "pm.test('codigoRespuesta 01', () => pm.expect(b.codigoRespuesta).to.eql('01'));",
+                          "pm.test('trae folio', () => pm.expect(b.datosDTE.folio).to.be.a('number'));",
+                          "if (b.datosDTE && b.datosDTE.folio) pm.collectionVariables.set('folioFactura', b.datosDTE.folio);"
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "002 - Campos obligatorios",
+              "item": [
+                {
+                  "name": "F33O rutEmisor=__DROP__",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/v1/factura",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "factura"
+                      ]
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{jwt}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"tipoDte\": 33,\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": 458,\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": 13101,\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"items\": [\n    {\n      \"numeroLinea\": 1,\n      \"nombreItem\": \"Servicio QA\",\n      \"cantidad\": 1,\n      \"precioUnitarioNeto\": 100000,\n      \"monto\": 100000\n    }\n  ],\n  \"montoNeto\": 100000,\n  \"montoIVA\": 19000,\n  \"montoTotal\": 119000\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test('HTTP en [400]', () => pm.expect([400]).to.include(pm.response.code));",
+                          "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "F33O tipoDte=__DROP__",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/v1/factura",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "factura"
+                      ]
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{jwt}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"rutEmisor\": \"{{rutEmisor}}\",\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": 458,\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": 13101,\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"items\": [\n    {\n      \"numeroLinea\": 1,\n      \"nombreItem\": \"Servicio QA\",\n      \"cantidad\": 1,\n      \"precioUnitarioNeto\": 100000,\n      \"monto\": 100000\n    }\n  ],\n  \"montoNeto\": 100000,\n  \"montoIVA\": 19000,\n  \"montoTotal\": 119000\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test('HTTP en [400]', () => pm.expect([400]).to.include(pm.response.code));",
+                          "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "F33O receptor=__DROP__",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/v1/factura",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "factura"
+                      ]
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{jwt}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"rutEmisor\": \"{{rutEmisor}}\",\n  \"tipoDte\": 33,\n  \"items\": [\n    {\n      \"numeroLinea\": 1,\n      \"nombreItem\": \"Servicio QA\",\n      \"cantidad\": 1,\n      \"precioUnitarioNeto\": 100000,\n      \"monto\": 100000\n    }\n  ],\n  \"montoNeto\": 100000,\n  \"montoIVA\": 19000,\n  \"montoTotal\": 119000\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test('HTTP en [400]', () => pm.expect([400]).to.include(pm.response.code));",
+                          "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "F33O items=[]",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/v1/factura",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "factura"
+                      ]
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{jwt}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"rutEmisor\": \"{{rutEmisor}}\",\n  \"tipoDte\": 33,\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": 458,\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": 13101,\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"items\": [],\n  \"montoNeto\": 100000,\n  \"montoIVA\": 19000,\n  \"montoTotal\": 119000\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test('HTTP en [400]', () => pm.expect([400]).to.include(pm.response.code));",
+                          "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "F33O montoNeto=__DROP__",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/v1/factura",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "factura"
+                      ]
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{jwt}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"rutEmisor\": \"{{rutEmisor}}\",\n  \"tipoDte\": 33,\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": 458,\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": 13101,\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"items\": [\n    {\n      \"numeroLinea\": 1,\n      \"nombreItem\": \"Servicio QA\",\n      \"cantidad\": 1,\n      \"precioUnitarioNeto\": 100000,\n      \"monto\": 100000\n    }\n  ],\n  \"montoIVA\": 19000,\n  \"montoTotal\": 119000\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test('HTTP en [400]', () => pm.expect([400]).to.include(pm.response.code));",
+                          "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "F33O montoIVA=__DROP__",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/v1/factura",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "factura"
+                      ]
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{jwt}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"rutEmisor\": \"{{rutEmisor}}\",\n  \"tipoDte\": 33,\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": 458,\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": 13101,\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"items\": [\n    {\n      \"numeroLinea\": 1,\n      \"nombreItem\": \"Servicio QA\",\n      \"cantidad\": 1,\n      \"precioUnitarioNeto\": 100000,\n      \"monto\": 100000\n    }\n  ],\n  \"montoNeto\": 100000,\n  \"montoTotal\": 119000\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test('HTTP en [400]', () => pm.expect([400]).to.include(pm.response.code));",
+                          "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "F33O montoTotal=__DROP__",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/v1/factura",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "factura"
+                      ]
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{jwt}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"rutEmisor\": \"{{rutEmisor}}\",\n  \"tipoDte\": 33,\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": 458,\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": 13101,\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"items\": [\n    {\n      \"numeroLinea\": 1,\n      \"nombreItem\": \"Servicio QA\",\n      \"cantidad\": 1,\n      \"precioUnitarioNeto\": 100000,\n      \"monto\": 100000\n    }\n  ],\n  \"montoNeto\": 100000,\n  \"montoIVA\": 19000\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test('HTTP en [400]', () => pm.expect([400]).to.include(pm.response.code));",
+                          "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "F33O receptor.rut=__DROP__",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/v1/factura",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "factura"
+                      ]
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{jwt}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"rutEmisor\": \"{{rutEmisor}}\",\n  \"tipoDte\": 33,\n  \"receptor\": {\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": 458,\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": 13101,\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"items\": [\n    {\n      \"numeroLinea\": 1,\n      \"nombreItem\": \"Servicio QA\",\n      \"cantidad\": 1,\n      \"precioUnitarioNeto\": 100000,\n      \"monto\": 100000\n    }\n  ],\n  \"montoNeto\": 100000,\n  \"montoIVA\": 19000,\n  \"montoTotal\": 119000\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test('HTTP en [400]', () => pm.expect([400]).to.include(pm.response.code));",
+                          "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "F33O receptor.giro=__DROP__",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/v1/factura",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "factura"
+                      ]
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{jwt}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"rutEmisor\": \"{{rutEmisor}}\",\n  \"tipoDte\": 33,\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": 13101,\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"items\": [\n    {\n      \"numeroLinea\": 1,\n      \"nombreItem\": \"Servicio QA\",\n      \"cantidad\": 1,\n      \"precioUnitarioNeto\": 100000,\n      \"monto\": 100000\n    }\n  ],\n  \"montoNeto\": 100000,\n  \"montoIVA\": 19000,\n  \"montoTotal\": 119000\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test('HTTP en [400]', () => pm.expect([400]).to.include(pm.response.code));",
+                          "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "F33O receptor.comuna=__DROP__",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/v1/factura",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "factura"
+                      ]
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{jwt}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"rutEmisor\": \"{{rutEmisor}}\",\n  \"tipoDte\": 33,\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": 458,\n    \"direccion\": \"Av. Providencia 1234\",\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"items\": [\n    {\n      \"numeroLinea\": 1,\n      \"nombreItem\": \"Servicio QA\",\n      \"cantidad\": 1,\n      \"precioUnitarioNeto\": 100000,\n      \"monto\": 100000\n    }\n  ],\n  \"montoNeto\": 100000,\n  \"montoIVA\": 19000,\n  \"montoTotal\": 119000\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test('HTTP en [400]', () => pm.expect([400]).to.include(pm.response.code));",
+                          "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "F33O items.0.monto=__DROP__",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/v1/factura",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "factura"
+                      ]
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{jwt}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"rutEmisor\": \"{{rutEmisor}}\",\n  \"tipoDte\": 33,\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": 458,\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": 13101,\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"items\": [\n    {\n      \"numeroLinea\": 1,\n      \"nombreItem\": \"Servicio QA\",\n      \"cantidad\": 1,\n      \"precioUnitarioNeto\": 100000\n    }\n  ],\n  \"montoNeto\": 100000,\n  \"montoIVA\": 19000,\n  \"montoTotal\": 119000\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test('HTTP en [400]', () => pm.expect([400]).to.include(pm.response.code));",
+                          "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "F33O items.0.cantidad=0",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/v1/factura",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "factura"
+                      ]
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{jwt}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"rutEmisor\": \"{{rutEmisor}}\",\n  \"tipoDte\": 33,\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": 458,\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": 13101,\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"items\": [\n    {\n      \"numeroLinea\": 1,\n      \"nombreItem\": \"Servicio QA\",\n      \"cantidad\": 0,\n      \"precioUnitarioNeto\": 100000,\n      \"monto\": 100000\n    }\n  ],\n  \"montoNeto\": 100000,\n  \"montoIVA\": 19000,\n  \"montoTotal\": 119000\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test('HTTP en [400]', () => pm.expect([400]).to.include(pm.response.code));",
+                          "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "003 - Montos / reglas tributarias",
+              "item": [
+                {
+                  "name": "F33M-001 neto negativo",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/v1/factura",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "factura"
+                      ]
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{jwt}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"rutEmisor\": \"{{rutEmisor}}\",\n  \"tipoDte\": 33,\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": 458,\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": 13101,\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"items\": [\n    {\n      \"numeroLinea\": 1,\n      \"nombreItem\": \"Servicio QA\",\n      \"cantidad\": 1,\n      \"precioUnitarioNeto\": 100000,\n      \"monto\": 100000\n    }\n  ],\n  \"montoNeto\": -100000,\n  \"montoIVA\": 19000,\n  \"montoTotal\": 119000\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test('HTTP en [400]', () => pm.expect([400]).to.include(pm.response.code));",
+                          "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "F33M-008 neto != suma items",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/v1/factura",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "factura"
+                      ]
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{jwt}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"rutEmisor\": \"{{rutEmisor}}\",\n  \"tipoDte\": 33,\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": 458,\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": 13101,\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"items\": [\n    {\n      \"numeroLinea\": 1,\n      \"nombreItem\": \"Servicio QA\",\n      \"cantidad\": 1,\n      \"precioUnitarioNeto\": 100000,\n      \"monto\": 100000\n    }\n  ],\n  \"montoNeto\": 999999,\n  \"montoIVA\": 190000,\n  \"montoTotal\": 1189999\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test('HTTP en [400]', () => pm.expect([400]).to.include(pm.response.code));",
+                          "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "F33M-009 IVA != 19%",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/v1/factura",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "factura"
+                      ]
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{jwt}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"rutEmisor\": \"{{rutEmisor}}\",\n  \"tipoDte\": 33,\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": 458,\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": 13101,\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"items\": [\n    {\n      \"numeroLinea\": 1,\n      \"nombreItem\": \"Servicio QA\",\n      \"cantidad\": 1,\n      \"precioUnitarioNeto\": 100000,\n      \"monto\": 100000\n    }\n  ],\n  \"montoNeto\": 100000,\n  \"montoIVA\": 1,\n  \"montoTotal\": 100001\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test('HTTP en [400]', () => pm.expect([400]).to.include(pm.response.code));",
+                          "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "F33M-010 total != neto+iva",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/v1/factura",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "factura"
+                      ]
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{jwt}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"rutEmisor\": \"{{rutEmisor}}\",\n  \"tipoDte\": 33,\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": 458,\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": 13101,\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"items\": [\n    {\n      \"numeroLinea\": 1,\n      \"nombreItem\": \"Servicio QA\",\n      \"cantidad\": 1,\n      \"precioUnitarioNeto\": 100000,\n      \"monto\": 100000\n    }\n  ],\n  \"montoNeto\": 100000,\n  \"montoIVA\": 19000,\n  \"montoTotal\": 1\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test('HTTP en [400]', () => pm.expect([400]).to.include(pm.response.code));",
+                          "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "F33M-021 IVA=0 en afecta",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/v1/factura",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "factura"
+                      ]
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{jwt}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"rutEmisor\": \"{{rutEmisor}}\",\n  \"tipoDte\": 33,\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": 458,\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": 13101,\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"items\": [\n    {\n      \"numeroLinea\": 1,\n      \"nombreItem\": \"Servicio QA\",\n      \"cantidad\": 1,\n      \"precioUnitarioNeto\": 100000,\n      \"monto\": 100000\n    }\n  ],\n  \"montoNeto\": 100000,\n  \"montoIVA\": 0,\n  \"montoTotal\": 119000\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test('HTTP en [400]', () => pm.expect([400]).to.include(pm.response.code));",
+                          "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "004 - RUT",
+              "item": [
+                {
+                  "name": "RUT-006 DV incorrecto",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/v1/factura",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "factura"
+                      ]
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{jwt}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"rutEmisor\": \"10471336-0\",\n  \"tipoDte\": 33,\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": 458,\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": 13101,\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"items\": [\n    {\n      \"numeroLinea\": 1,\n      \"nombreItem\": \"Servicio QA\",\n      \"cantidad\": 1,\n      \"precioUnitarioNeto\": 100000,\n      \"monto\": 100000\n    }\n  ],\n  \"montoNeto\": 100000,\n  \"montoIVA\": 19000,\n  \"montoTotal\": 119000\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test('HTTP en [400]', () => pm.expect([400]).to.include(pm.response.code));",
+                          "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "RUT-021 rutEmisor != sub JWT",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/v1/factura",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "factura"
+                      ]
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{jwt}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"rutEmisor\": \"77151256-9\",\n  \"tipoDte\": 33,\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": 458,\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": 13101,\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"items\": [\n    {\n      \"numeroLinea\": 1,\n      \"nombreItem\": \"Servicio QA\",\n      \"cantidad\": 1,\n      \"precioUnitarioNeto\": 100000,\n      \"monto\": 100000\n    }\n  ],\n  \"montoNeto\": 100000,\n  \"montoIVA\": 19000,\n  \"montoTotal\": 119000\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test('HTTP en [403]', () => pm.expect([403]).to.include(pm.response.code));",
+                          "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "RUT-010 rutEmisor vacio",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/v1/factura",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "factura"
+                      ]
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{jwt}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"rutEmisor\": \"\",\n  \"tipoDte\": 33,\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": 458,\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": 13101,\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"items\": [\n    {\n      \"numeroLinea\": 1,\n      \"nombreItem\": \"Servicio QA\",\n      \"cantidad\": 1,\n      \"precioUnitarioNeto\": 100000,\n      \"monto\": 100000\n    }\n  ],\n  \"montoNeto\": 100000,\n  \"montoIVA\": 19000,\n  \"montoTotal\": 119000\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test('HTTP en [400, 403]', () => pm.expect([400, 403]).to.include(pm.response.code));",
+                          "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "RUT-020 receptor.rut DV malo",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/v1/factura",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "factura"
+                      ]
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{jwt}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"rutEmisor\": \"{{rutEmisor}}\",\n  \"tipoDte\": 33,\n  \"receptor\": {\n    \"rut\": \"26461274-0\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": 458,\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": 13101,\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"items\": [\n    {\n      \"numeroLinea\": 1,\n      \"nombreItem\": \"Servicio QA\",\n      \"cantidad\": 1,\n      \"precioUnitarioNeto\": 100000,\n      \"monto\": 100000\n    }\n  ],\n  \"montoNeto\": 100000,\n  \"montoIVA\": 19000,\n  \"montoTotal\": 119000\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test('HTTP en [400]', () => pm.expect([400]).to.include(pm.response.code));",
+                          "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "005 - Tipos de dato / desconocidos",
+              "item": [
+                {
+                  "name": "F33T-001 tipoDte string",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/v1/factura",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "factura"
+                      ]
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{jwt}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"rutEmisor\": \"{{rutEmisor}}\",\n  \"tipoDte\": \"33\",\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": 458,\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": 13101,\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"items\": [\n    {\n      \"numeroLinea\": 1,\n      \"nombreItem\": \"Servicio QA\",\n      \"cantidad\": 1,\n      \"precioUnitarioNeto\": 100000,\n      \"monto\": 100000\n    }\n  ],\n  \"montoNeto\": 100000,\n  \"montoIVA\": 19000,\n  \"montoTotal\": 119000\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test('HTTP en [400, 200]', () => pm.expect([400, 200]).to.include(pm.response.code));",
+                          "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "F33U-001 campo desconocido",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/v1/factura",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "factura"
+                      ]
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{jwt}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"rutEmisor\": \"{{rutEmisor}}\",\n  \"tipoDte\": 33,\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": 458,\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": 13101,\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"items\": [\n    {\n      \"numeroLinea\": 1,\n      \"nombreItem\": \"Servicio QA\",\n      \"cantidad\": 1,\n      \"precioUnitarioNeto\": 100000,\n      \"monto\": 100000\n    }\n  ],\n  \"montoNeto\": 100000,\n  \"montoIVA\": 19000,\n  \"montoTotal\": 119000,\n  \"campoNoExiste\": \"test\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test('HTTP en [200, 400]', () => pm.expect([200, 400]).to.include(pm.response.code));",
+                          "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "F33U-004 tipoDte 61 en /v1/factura",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/v1/factura",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "factura"
+                      ]
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{jwt}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"rutEmisor\": \"{{rutEmisor}}\",\n  \"tipoDte\": 61,\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": 458,\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": 13101,\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"items\": [\n    {\n      \"numeroLinea\": 1,\n      \"nombreItem\": \"Servicio QA\",\n      \"cantidad\": 1,\n      \"precioUnitarioNeto\": 100000,\n      \"monto\": 100000\n    }\n  ],\n  \"montoNeto\": 100000,\n  \"montoIVA\": 19000,\n  \"montoTotal\": 119000\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test('HTTP en [400]', () => pm.expect([400]).to.include(pm.response.code));",
+                          "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "006 - Seguridad / HTTP",
+              "item": [
+                {
+                  "name": "F33X-006 GET sobre /v1/factura",
+                  "request": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{baseUrl}}/v1/factura",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "factura"
+                      ]
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{jwt}}",
+                          "type": "string"
+                        }
+                      ]
+                    }
+                  },
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test('HTTP en [405]', () => pm.expect([405]).to.include(pm.response.code));",
+                          "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "F33X-001 Content-Type text/plain",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "text/plain"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/v1/factura",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "factura"
+                      ]
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{jwt}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\"rutEmisor\": \"{{rutEmisor}}\", \"tipoDte\": 33, \"receptor\": {\"rut\": \"{{rutReceptor}}\", \"razonSocial\": \"Empresa Receptora SpA\", \"giro\": 458, \"direccion\": \"Av. Providencia 1234\", \"comuna\": 13101, \"email\": \"factura@empresa.cl\", \"telefono\": \"92323420\"}, \"items\": [{\"numeroLinea\": 1, \"nombreItem\": \"Servicio QA\", \"cantidad\": 1, \"precioUnitarioNeto\": 100000, \"monto\": 100000}], \"montoNeto\": 100000, \"montoIVA\": 19000, \"montoTotal\": 119000}"
+                    }
+                  },
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test('HTTP en [415, 400]', () => pm.expect([415, 400]).to.include(pm.response.code));",
+                          "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "F33X-003 body vacio",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/v1/factura",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "factura"
+                      ]
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{jwt}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": ""
+                    }
+                  },
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test('HTTP en [400]', () => pm.expect([400]).to.include(pm.response.code));",
+                          "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "F33S-008 SQLi en razonSocial",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/v1/factura",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "factura"
+                      ]
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{jwt}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"rutEmisor\": \"{{rutEmisor}}\",\n  \"tipoDte\": 33,\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"x'; DROP TABLE dte;--\",\n    \"giro\": 458,\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": 13101,\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"items\": [\n    {\n      \"numeroLinea\": 1,\n      \"nombreItem\": \"Servicio QA\",\n      \"cantidad\": 1,\n      \"precioUnitarioNeto\": 100000,\n      \"monto\": 100000\n    }\n  ],\n  \"montoNeto\": 100000,\n  \"montoIVA\": 19000,\n  \"montoTotal\": 119000\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test('HTTP en [200, 400]', () => pm.expect([200, 400]).to.include(pm.response.code));",
+                          "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "007 - Duplicidad",
+              "item": [
+                {
+                  "name": "DUP-001 reenvio 1",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/v1/factura",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "factura"
+                      ]
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{jwt}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"rutEmisor\": \"{{rutEmisor}}\",\n  \"tipoDte\": 33,\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": 458,\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": 13101,\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"items\": [\n    {\n      \"numeroLinea\": 1,\n      \"nombreItem\": \"Servicio QA\",\n      \"cantidad\": 1,\n      \"precioUnitarioNeto\": 100000,\n      \"monto\": 100000\n    }\n  ],\n  \"montoNeto\": 100000,\n  \"montoIVA\": 19000,\n  \"montoTotal\": 119000\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test('HTTP en [200, 409]', () => pm.expect([200, 409]).to.include(pm.response.code));",
+                          "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "DUP-001 reenvio 2",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/v1/factura",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "factura"
+                      ]
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{jwt}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"rutEmisor\": \"{{rutEmisor}}\",\n  \"tipoDte\": 33,\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": 458,\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": 13101,\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"items\": [\n    {\n      \"numeroLinea\": 1,\n      \"nombreItem\": \"Servicio QA\",\n      \"cantidad\": 1,\n      \"precioUnitarioNeto\": 100000,\n      \"monto\": 100000\n    }\n  ],\n  \"montoNeto\": 100000,\n  \"montoIVA\": 19000,\n  \"montoTotal\": 119000\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test('HTTP en [200, 409]', () => pm.expect([200, 409]).to.include(pm.response.code));",
+                          "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "DUP-001 reenvio 3",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/v1/factura",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "factura"
+                      ]
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{jwt}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"rutEmisor\": \"{{rutEmisor}}\",\n  \"tipoDte\": 33,\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": 458,\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": 13101,\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"items\": [\n    {\n      \"numeroLinea\": 1,\n      \"nombreItem\": \"Servicio QA\",\n      \"cantidad\": 1,\n      \"precioUnitarioNeto\": 100000,\n      \"monto\": 100000\n    }\n  ],\n  \"montoNeto\": 100000,\n  \"montoIVA\": 19000,\n  \"montoTotal\": 119000\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test('HTTP en [200, 409]', () => pm.expect([200, 409]).to.include(pm.response.code));",
+                          "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "008 - Autenticacion",
+              "item": [
+                {
+                  "name": "AUTH-002 sin token",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/v1/factura",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "factura"
+                      ]
+                    },
+                    "auth": {
+                      "type": "noauth"
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"rutEmisor\": \"{{rutEmisor}}\",\n  \"tipoDte\": 33,\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": 458,\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": 13101,\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"items\": [\n    {\n      \"numeroLinea\": 1,\n      \"nombreItem\": \"Servicio QA\",\n      \"cantidad\": 1,\n      \"precioUnitarioNeto\": 100000,\n      \"monto\": 100000\n    }\n  ],\n  \"montoNeto\": 100000,\n  \"montoIVA\": 19000,\n  \"montoTotal\": 119000\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test('HTTP en [401]', () => pm.expect([401]).to.include(pm.response.code));",
+                          "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "AUTH-009 firma alterada",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Authorization",
+                        "value": "Bearer {{jwt}}X"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/v1/factura",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "factura"
+                      ]
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{jwt}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"rutEmisor\": \"{{rutEmisor}}\",\n  \"tipoDte\": 33,\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": 458,\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": 13101,\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"items\": [\n    {\n      \"numeroLinea\": 1,\n      \"nombreItem\": \"Servicio QA\",\n      \"cantidad\": 1,\n      \"precioUnitarioNeto\": 100000,\n      \"monto\": 100000\n    }\n  ],\n  \"montoNeto\": 100000,\n  \"montoIVA\": 19000,\n  \"montoTotal\": 119000\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test('HTTP en [401, 403]', () => pm.expect([401, 403]).to.include(pm.response.code));",
+                          "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "02 - Factura Tipo 34",
+          "item": [
+            {
+              "name": "001 - Happy Path",
+              "item": [
+                {
+                  "name": "F34-001 exenta minima",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/v1/factura",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "factura"
+                      ]
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{jwt}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"rutEmisor\": \"{{rutEmisor}}\",\n  \"tipoDte\": 34,\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": 458,\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": 13101,\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"items\": [\n    {\n      \"numeroLinea\": 1,\n      \"nombreItem\": \"Consulta medica\",\n      \"cantidad\": 1,\n      \"precioUnitarioNeto\": 45000,\n      \"monto\": 45000\n    }\n  ],\n  \"montoTotal\": 45000\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                          "const b = pm.response.json();",
+                          "pm.test('codigoRespuesta 01', () => pm.expect(b.codigoRespuesta).to.eql('01'));",
+                          "pm.test('trae folio', () => pm.expect(b.datosDTE.folio).to.be.a('number'));",
+                          "if (b.datosDTE && b.datosDTE.folio) pm.collectionVariables.set('folioFactura', b.datosDTE.folio);"
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "002 - IVA en exenta",
+              "item": [
+                {
+                  "name": "F34-003 exenta con IVA>0",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/v1/factura",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "factura"
+                      ]
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{jwt}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"rutEmisor\": \"{{rutEmisor}}\",\n  \"tipoDte\": 34,\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": 458,\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": 13101,\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"items\": [\n    {\n      \"numeroLinea\": 1,\n      \"nombreItem\": \"Consulta medica\",\n      \"cantidad\": 1,\n      \"precioUnitarioNeto\": 45000,\n      \"monto\": 45000\n    }\n  ],\n  \"montoTotal\": 45000,\n  \"montoNeto\": 45000,\n  \"montoIVA\": 8550\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test('HTTP en [200, 400]', () => pm.expect([200, 400]).to.include(pm.response.code));",
+                          "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "F34-006 exenta con IVA negativo",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/v1/factura",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "factura"
+                      ]
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{jwt}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"rutEmisor\": \"{{rutEmisor}}\",\n  \"tipoDte\": 34,\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": 458,\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": 13101,\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"items\": [\n    {\n      \"numeroLinea\": 1,\n      \"nombreItem\": \"Consulta medica\",\n      \"cantidad\": 1,\n      \"precioUnitarioNeto\": 45000,\n      \"monto\": 45000\n    }\n  ],\n  \"montoTotal\": 45000,\n  \"montoIVA\": -1000\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test('HTTP en [200, 400]', () => pm.expect([200, 400]).to.include(pm.response.code));",
+                          "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "003 - Montos",
+              "item": [
+                {
+                  "name": "F34-008 total 0",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/v1/factura",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "factura"
+                      ]
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{jwt}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"rutEmisor\": \"{{rutEmisor}}\",\n  \"tipoDte\": 34,\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": 458,\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": 13101,\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"items\": [\n    {\n      \"numeroLinea\": 1,\n      \"nombreItem\": \"Consulta medica\",\n      \"cantidad\": 1,\n      \"precioUnitarioNeto\": 45000,\n      \"monto\": 45000\n    }\n  ],\n  \"montoTotal\": 0\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test('HTTP en [400]', () => pm.expect([400]).to.include(pm.response.code));",
+                          "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "F34-009 total negativo",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/v1/factura",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "factura"
+                      ]
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{jwt}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"rutEmisor\": \"{{rutEmisor}}\",\n  \"tipoDte\": 34,\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": 458,\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": 13101,\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"items\": [\n    {\n      \"numeroLinea\": 1,\n      \"nombreItem\": \"Consulta medica\",\n      \"cantidad\": 1,\n      \"precioUnitarioNeto\": 45000,\n      \"monto\": 45000\n    }\n  ],\n  \"montoTotal\": -45000\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test('HTTP en [400]', () => pm.expect([400]).to.include(pm.response.code));",
+                          "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "004 - Datos invalidos",
+              "item": [
+                {
+                  "name": "F34-013 items duplicados",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/v1/factura",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "factura"
+                      ]
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{jwt}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"rutEmisor\": \"{{rutEmisor}}\",\n  \"tipoDte\": 34,\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": 458,\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": 13101,\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"items\": [\n    {\n      \"numeroLinea\": 1,\n      \"nombreItem\": \"Consulta medica\",\n      \"cantidad\": 1,\n      \"precioUnitarioNeto\": 45000,\n      \"monto\": 45000\n    },\n    {\n      \"numeroLinea\": 1,\n      \"nombreItem\": \"Consulta medica\",\n      \"cantidad\": 1,\n      \"precioUnitarioNeto\": 45000,\n      \"monto\": 45000\n    }\n  ],\n  \"montoTotal\": 90000\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test('HTTP en [200, 400]', () => pm.expect([200, 400]).to.include(pm.response.code));",
+                          "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "03 - Nota de Credito Tipo 61",
+          "item": [
+            {
+              "name": "NC-001 tipo 61 a /v1/factura",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/v1/factura",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "factura"
+                  ]
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{jwt}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"rutEmisor\": \"{{rutEmisor}}\",\n  \"tipoDte\": 61,\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": 458,\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": 13101,\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"items\": [\n    {\n      \"numeroLinea\": 1,\n      \"nombreItem\": \"Servicio QA\",\n      \"cantidad\": 1,\n      \"precioUnitarioNeto\": 100000,\n      \"monto\": 100000\n    }\n  ],\n  \"montoNeto\": 100000,\n  \"montoIVA\": 19000,\n  \"montoTotal\": 119000\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('HTTP en [400]', () => pm.expect([400]).to.include(pm.response.code));",
+                      "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "NC-002 happy (requiere folio ACEPTADO)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrlNc}}/v1/nota-credito",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "{{baseUrlNc}}",
+                    "v1",
+                    "nota-credito"
+                  ]
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{jwt}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"codigoReferencia\": 1,\n  \"razonReferencia\": \"Anula por error en datos\",\n  \"rutEmisor\": \"{{rutEmisor}}\",\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": \"Edicion de programas informaticos\",\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": \"Santiago\",\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"datosFactura\": {\n    \"tipoDte\": 33,\n    \"folio\": \"{{folioFactura}}\",\n    \"items\": [\n      {\n        \"numeroLinea\": 1,\n        \"nombreItem\": \"Servicio QA\",\n        \"cantidad\": 1,\n        \"precioUnitarioNeto\": 100000,\n        \"monto\": 100000\n      }\n    ],\n    \"montoNeto\": 100000,\n    \"montoIVA\": 19000,\n    \"montoTotal\": 119000\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('HTTP en [200, 422, 400]', () => pm.expect([200, 422, 400]).to.include(pm.response.code));",
+                      "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "NC-005 folio referencia inexistente",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrlNc}}/v1/nota-credito",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "{{baseUrlNc}}",
+                    "v1",
+                    "nota-credito"
+                  ]
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{jwt}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"codigoReferencia\": 1,\n  \"razonReferencia\": \"Anula por error en datos\",\n  \"rutEmisor\": \"{{rutEmisor}}\",\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": \"Edicion de programas informaticos\",\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": \"Santiago\",\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"datosFactura\": {\n    \"tipoDte\": 33,\n    \"folio\": 999999999,\n    \"items\": [\n      {\n        \"numeroLinea\": 1,\n        \"nombreItem\": \"Servicio QA\",\n        \"cantidad\": 1,\n        \"precioUnitarioNeto\": 100000,\n        \"monto\": 100000\n      }\n    ],\n    \"montoNeto\": 100000,\n    \"montoIVA\": 19000,\n    \"montoTotal\": 119000\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('HTTP en [422, 404, 400]', () => pm.expect([422, 404, 400]).to.include(pm.response.code));",
+                      "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "NC-010 monto NC > original",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrlNc}}/v1/nota-credito",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "{{baseUrlNc}}",
+                    "v1",
+                    "nota-credito"
+                  ]
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{jwt}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"codigoReferencia\": 1,\n  \"razonReferencia\": \"Anula por error en datos\",\n  \"rutEmisor\": \"{{rutEmisor}}\",\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": \"Edicion de programas informaticos\",\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": \"Santiago\",\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"datosFactura\": {\n    \"tipoDte\": 33,\n    \"folio\": \"{{folioFactura}}\",\n    \"items\": [\n      {\n        \"numeroLinea\": 1,\n        \"nombreItem\": \"Servicio QA\",\n        \"cantidad\": 1,\n        \"precioUnitarioNeto\": 100000,\n        \"monto\": 100000\n      }\n    ],\n    \"montoNeto\": 100000,\n    \"montoIVA\": 19000,\n    \"montoTotal\": 999999999\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('HTTP en [400, 422]', () => pm.expect([400, 422]).to.include(pm.response.code));",
+                      "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "NC-014 codigoReferencia invalido",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrlNc}}/v1/nota-credito",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "{{baseUrlNc}}",
+                    "v1",
+                    "nota-credito"
+                  ]
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{jwt}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"codigoReferencia\": 99,\n  \"razonReferencia\": \"Anula por error en datos\",\n  \"rutEmisor\": \"{{rutEmisor}}\",\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": \"Edicion de programas informaticos\",\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": \"Santiago\",\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"datosFactura\": {\n    \"tipoDte\": 33,\n    \"folio\": \"{{folioFactura}}\",\n    \"items\": [\n      {\n        \"numeroLinea\": 1,\n        \"nombreItem\": \"Servicio QA\",\n        \"cantidad\": 1,\n        \"precioUnitarioNeto\": 100000,\n        \"monto\": 100000\n      }\n    ],\n    \"montoNeto\": 100000,\n    \"montoIVA\": 19000,\n    \"montoTotal\": 119000\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('HTTP en [400, 422]', () => pm.expect([400, 422]).to.include(pm.response.code));",
+                      "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "NC-018 NC duplicada",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrlNc}}/v1/nota-credito",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "{{baseUrlNc}}",
+                    "v1",
+                    "nota-credito"
+                  ]
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{jwt}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"codigoReferencia\": 1,\n  \"razonReferencia\": \"Anula por error en datos\",\n  \"rutEmisor\": \"{{rutEmisor}}\",\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": \"Edicion de programas informaticos\",\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": \"Santiago\",\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"datosFactura\": {\n    \"tipoDte\": 33,\n    \"folio\": \"{{folioFactura}}\",\n    \"items\": [\n      {\n        \"numeroLinea\": 1,\n        \"nombreItem\": \"Servicio QA\",\n        \"cantidad\": 1,\n        \"precioUnitarioNeto\": 100000,\n        \"monto\": 100000\n      }\n    ],\n    \"montoNeto\": 100000,\n    \"montoIVA\": 19000,\n    \"montoTotal\": 119000\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('HTTP en [409, 422, 200]', () => pm.expect([409, 422, 200]).to.include(pm.response.code));",
+                      "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "NC-020 sub != rutEmisor",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrlNc}}/v1/nota-credito",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "{{baseUrlNc}}",
+                    "v1",
+                    "nota-credito"
+                  ]
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{jwt}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"codigoReferencia\": 1,\n  \"razonReferencia\": \"Anula por error en datos\",\n  \"rutEmisor\": \"77151256-9\",\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": \"Edicion de programas informaticos\",\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": \"Santiago\",\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"datosFactura\": {\n    \"tipoDte\": 33,\n    \"folio\": \"{{folioFactura}}\",\n    \"items\": [\n      {\n        \"numeroLinea\": 1,\n        \"nombreItem\": \"Servicio QA\",\n        \"cantidad\": 1,\n        \"precioUnitarioNeto\": 100000,\n        \"monto\": 100000\n      }\n    ],\n    \"montoNeto\": 100000,\n    \"montoIVA\": 19000,\n    \"montoTotal\": 119000\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('HTTP en [403]', () => pm.expect([403]).to.include(pm.response.code));",
+                      "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "NC-021 sin token",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrlNc}}/v1/nota-credito",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "{{baseUrlNc}}",
+                    "v1",
+                    "nota-credito"
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"codigoReferencia\": 1,\n  \"razonReferencia\": \"Anula por error en datos\",\n  \"rutEmisor\": \"{{rutEmisor}}\",\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": \"Edicion de programas informaticos\",\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": \"Santiago\",\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"datosFactura\": {\n    \"tipoDte\": 33,\n    \"folio\": \"{{folioFactura}}\",\n    \"items\": [\n      {\n        \"numeroLinea\": 1,\n        \"nombreItem\": \"Servicio QA\",\n        \"cantidad\": 1,\n        \"precioUnitarioNeto\": 100000,\n        \"monto\": 100000\n      }\n    ],\n    \"montoNeto\": 100000,\n    \"montoIVA\": 19000,\n    \"montoTotal\": 119000\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('HTTP en [401]', () => pm.expect([401]).to.include(pm.response.code));",
+                      "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "04 - Regiones",
+          "item": [
+            {
+              "name": "REG-001 happy",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/v1/regiones",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "regiones"
+                  ]
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{jwt}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('200', () => pm.response.to.have.status(200));",
+                      "const b = pm.response.json();",
+                      "pm.test('total == len(data)', () => pm.expect(b.total).to.eql(b.data.length));",
+                      "pm.test('16 regiones', () => pm.expect(b.total).to.eql(16));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "REG-002 sin token",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/v1/regiones",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "regiones"
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('HTTP en [401]', () => pm.expect([401]).to.include(pm.response.code));",
+                      "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "REG-007 POST (metodo)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/v1/regiones",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "regiones"
+                  ]
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{jwt}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('HTTP en [405]', () => pm.expect([405]).to.include(pm.response.code));",
+                      "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "05 - Comunas",
+          "item": [
+            {
+              "name": "COM-001 happy region 13",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/v1/regiones/13/comunas",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "regiones",
+                    "13",
+                    "comunas"
+                  ]
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{jwt}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('200', () => pm.response.to.have.status(200));",
+                      "const b = pm.response.json();",
+                      "pm.test('region.id == 13', () => pm.expect(b.data.region.id).to.eql(13));",
+                      "pm.test('comunas prefijo 13', () => b.data.comunas.forEach(c => pm.expect(String(c.id)).to.match(/^13/)));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "COM-008 region inexistente",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/v1/regiones/99/comunas",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "regiones",
+                    "99",
+                    "comunas"
+                  ]
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{jwt}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('HTTP en [404]', () => pm.expect([404]).to.include(pm.response.code));",
+                      "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "COM-010 region negativa",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/v1/regiones/-1/comunas",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "regiones",
+                    "-1",
+                    "comunas"
+                  ]
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{jwt}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('HTTP en [400, 404]', () => pm.expect([400, 404]).to.include(pm.response.code));",
+                      "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "COM-012 region string",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/v1/regiones/abc/comunas",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "regiones",
+                    "abc",
+                    "comunas"
+                  ]
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{jwt}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('HTTP en [400]', () => pm.expect([400]).to.include(pm.response.code));",
+                      "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "COM-018 SQLi",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/v1/regiones/13 OR 1=1/comunas",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "regiones",
+                    "13 OR 1=1",
+                    "comunas"
+                  ]
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{jwt}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('HTTP en [400, 404]', () => pm.expect([400, 404]).to.include(pm.response.code));",
+                      "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "06 - Rubros",
+          "item": [
+            {
+              "name": "RUB-001 happy",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/v1/rubros",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "rubros"
+                  ]
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{jwt}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('HTTP en [200]', () => pm.expect([200]).to.include(pm.response.code));",
+                      "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "RUB-auth sin token",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/v1/rubros",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "rubros"
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('HTTP en [401]', () => pm.expect([401]).to.include(pm.response.code));",
+                      "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "07 - Actecos",
+          "item": [
+            {
+              "name": "ACT-001 happy rubro 7",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/v1/rubros/7/acteco",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "rubros",
+                    "7",
+                    "acteco"
+                  ]
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{jwt}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('HTTP en [200]', () => pm.expect([200]).to.include(pm.response.code));",
+                      "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "ACT-008 rubro inexistente",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/v1/rubros/99/acteco",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "rubros",
+                    "99",
+                    "acteco"
+                  ]
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{jwt}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('HTTP en [404]', () => pm.expect([404]).to.include(pm.response.code));",
+                      "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "ACT-invalid string",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/v1/rubros/abc/acteco",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "rubros",
+                    "abc",
+                    "acteco"
+                  ]
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{jwt}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('HTTP en [400]', () => pm.expect([400]).to.include(pm.response.code));",
+                      "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "08 - App POS (sin JWT)",
+          "item": [
+            {
+              "name": "APPC-001 app/regiones sin token",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/v1/app/regiones",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "app",
+                    "regiones"
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('HTTP en [200, 401]', () => pm.expect([200, 401]).to.include(pm.response.code));",
+                      "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "APPC app/comunas sin token",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/v1/app/regiones/13/comunas",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "app",
+                    "regiones",
+                    "13",
+                    "comunas"
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('HTTP en [200, 401]', () => pm.expect([200, 401]).to.include(pm.response.code));",
+                      "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "APPC app/rubros sin token",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/v1/app/rubros",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "app",
+                    "rubros"
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('HTTP en [200, 401]', () => pm.expect([200, 401]).to.include(pm.response.code));",
+                      "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "APPF-001 app/factura 33 sin token",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/v1/app/factura",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "app",
+                    "factura"
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"rutEmisor\": \"{{rutEmisor}}\",\n  \"tipoDte\": 33,\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": 458,\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": 13101,\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"items\": [\n    {\n      \"numeroLinea\": 1,\n      \"nombreItem\": \"Servicio QA\",\n      \"cantidad\": 1,\n      \"precioUnitarioNeto\": 100000,\n      \"monto\": 100000\n    }\n  ],\n  \"montoNeto\": 100000,\n  \"montoIVA\": 19000,\n  \"montoTotal\": 119000\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('HTTP en [200, 401]', () => pm.expect([200, 401]).to.include(pm.response.code));",
+                      "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "APPF-009 app/factura otro rutEmisor",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/v1/app/factura",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "app",
+                    "factura"
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"rutEmisor\": \"77151256-9\",\n  \"tipoDte\": 33,\n  \"receptor\": {\n    \"rut\": \"{{rutReceptor}}\",\n    \"razonSocial\": \"Empresa Receptora SpA\",\n    \"giro\": 458,\n    \"direccion\": \"Av. Providencia 1234\",\n    \"comuna\": 13101,\n    \"email\": \"factura@empresa.cl\",\n    \"telefono\": \"92323420\"\n  },\n  \"items\": [\n    {\n      \"numeroLinea\": 1,\n      \"nombreItem\": \"Servicio QA\",\n      \"cantidad\": 1,\n      \"precioUnitarioNeto\": 100000,\n      \"monto\": 100000\n    }\n  ],\n  \"montoNeto\": 100000,\n  \"montoIVA\": 19000,\n  \"montoTotal\": 119000\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('HTTP en [400, 401, 403]', () => pm.expect([400, 401, 403]).to.include(pm.response.code));",
+                      "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "09 - Consultas (evidencia)",
+          "item": [
+            {
+              "name": "Consulta DTE 33 por folio",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrlConsultas}}/v1/app/dte/33/{{folioFactura}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "{{baseUrlConsultas}}",
+                    "v1",
+                    "app",
+                    "dte",
+                    "33",
+                    "{{folioFactura}}"
+                  ]
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{jwt}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"rutEmisor\": \"10471336-K\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('HTTP en [200, 404, 403]', () => pm.expect([200, 404, 403]).to.include(pm.response.code));",
+                      "pm.test('responde JSON', () => pm.response.to.be.json || pm.response.code >= 500);"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "DEV",
+      "item": [
+        {
+          "name": "Estructura preparada - NO EJECUTAR en Fase 1",
+          "item": [
+            {
+              "name": "Login DEV",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "https://apidev.mcdesaqa.cl/public/auth/web/v1/login",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "https:",
+                    "",
+                    "apidev.mcdesaqa.cl",
+                    "public",
+                    "auth",
+                    "web",
+                    "v1",
+                    "login"
+                  ]
+                },
+                "auth": {
+                  "type": "noauth"
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"user\": \"{{loginUser}}\",\n  \"pass\": \"{{loginPass}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "{{baseUrlQA}}"
+    },
+    {
+      "key": "jwt",
+      "value": ""
+    },
+    {
+      "key": "rutEmisor",
+      "value": "10471336-K"
+    },
+    {
+      "key": "rutReceptor",
+      "value": "26461274-8"
+    },
+    {
+      "key": "folioFactura",
+      "value": ""
+    }
+  ]
+}

@@ -1,0 +1,264 @@
+{
+  "info": {
+    "_postman_id": "7a806ebc-5922-40ed-a4a8-a79bfd407de9",
+    "name": "Api Documento Tributario (Factura y NC) App/POS",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "9633092"
+  },
+  "item": [
+    {
+      "name": "Invoice",
+      "item": [
+        {
+          "name": "Generate Invoice v1",
+          "request": {
+            "auth": {
+              "type": "bearer"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"rutEmisor\": \"10471336-K\",\n    \"tipoDte\": 33,\n    \"receptor\": {\n        \"rut\": \"26461274-8\",\n        \"razonSocial\": \"Empresa Receptora SpA\",\n        \"giro\": 659,\n        \"direccion\": \"Av. Providencia 1234\",\n        \"comuna\": 4102,\n        \"email\": \"factura@empresa.cl\",\n        \"telefono\": \"92323420\"\n    },\n    \"items\": [\n        {\n            \"numeroLinea\": 1,\n            \"nombreItem\": \"Consultoría TI\",\n            \"descripcion\": \"Desarrollo aplicación Angular v22\",\n            \"cantidad\": 10,\n            \"precioUnitarioNeto\": 50000,\n            \"movimientoItem\": {\n                \"tipo\": \"D\",\n                \"tipoValor\": \"%\",\n                \"porcentaje\": 10,\n                \"monto\": 50000\n            },\n            \"monto\": 450000,\n            \"codigoItem\": \"SKU-12321\",\n            \"unidadMedida\": \"KG\"\n        },\n        {\n            \"numeroLinea\": 2,\n            \"nombreItem\": \"Licencia software\",\n            \"cantidad\": 2,\n            \"precioUnitarioNeto\": 80000,\n            \"monto\": 160000\n        }\n    ],\n    \"montoNeto\": 610000,\n    \"montoIVA\": 115900,\n    \"montoTotal\": 725900\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://5nnpwr8b-3000.brs.devtunnels.ms/central/dte/fe/recepcion/v1/app/factura",
+              "protocol": "https",
+              "host": [
+                "5nnpwr8b-3000",
+                "brs",
+                "devtunnels",
+                "ms"
+              ],
+              "path": [
+                "central",
+                "dte",
+                "fe",
+                "recepcion",
+                "v1",
+                "app",
+                "factura"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Credit refund",
+      "item": [
+        {
+          "name": "Get Invoice data",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "https://5nnpwr8b-3000.brs.devtunnels.ms/central/dte/fe/consultas/v1/app/dte/{{tipoDte}}/{{folio}}",
+              "protocol": "https",
+              "host": [
+                "5nnpwr8b-3000",
+                "brs",
+                "devtunnels",
+                "ms"
+              ],
+              "path": [
+                "central",
+                "dte",
+                "fe",
+                "consultas",
+                "v1",
+                "app",
+                "dte",
+                "{{tipoDte}}",
+                "{{folio}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Generate Credit refund",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"codigoReferencia\": 1,\n    \"razonReferencia\": \"Devolución de productos\",\n    \"rutEmisor\": \"10471336-K\",\n    \"receptor\": {\n        \"rut\": \"26461274-8\",\n        \"razonSocial\": \"Empresa Receptora SpA\",\n        \"giro\": \"CULTIVO DE SEMILLAS DE MARAVILLA (GIRASOL)\",\n        \"direccion\": \"Av. Providencia 1234\",\n        \"comuna\": \"Santiago\",\n        \"email\": \"Santiago\",\n        \"telefono\": \"9857876766\"\n    },\n    \"datosFactura\": {\n        \"tipoDte\": 33,\n        \"folio\": 102,\n        \"items\": [\n            {\n                \"numeroLinea\": 10,\n                \"nombreItem\": \"Consultoría TI\",\n                \"cantidad\": 1,\n                \"precioUnitarioNeto\": 5000,\n                \"monto\": 4000,\n                \"descripcion\": \"Desarrollo aplicación Angular v22\",\n                \"codigoItem\": \"SKU-12321\",\n                //\"unidadMedida\": \"string\",\n                \"movimientoItem\": {\n                    \"tipo\": \"D\",\n                    \"tipoValor\": \"$\",\n                    \"monto\": 1000\n                    //\"porcentaje\": %\n                }\n            }\n        ],\n        \"movimientoGlobal\": {\n            \"tipoMovimiento\": \"D\",\n            \"tipoValor\": \"$\",\n            \"monto\": 1000,\n            //\"porcentaje\": %,\n            \"descripcion\": \"No data\"\n        },\n        \"montoNeto\": 4000,\n        \"montoIVA\": 760,\n        \"montoTotal\": 4000\n    }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://5nnpwr8b-3000.brs.devtunnels.ms/central/dte/fe/recepcion-nc/v1/app/nota-credito",
+              "protocol": "https",
+              "host": [
+                "5nnpwr8b-3000",
+                "brs",
+                "devtunnels",
+                "ms"
+              ],
+              "path": [
+                "central",
+                "dte",
+                "fe",
+                "recepcion-nc",
+                "v1",
+                "app",
+                "nota-credito"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Location",
+      "item": [
+        {
+          "name": "Get Regions",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://5nnpwr8b-3000.brs.devtunnels.ms/central/dte/fe/recepcion/v1/app/regiones",
+              "protocol": "https",
+              "host": [
+                "5nnpwr8b-3000",
+                "brs",
+                "devtunnels",
+                "ms"
+              ],
+              "path": [
+                "central",
+                "dte",
+                "fe",
+                "recepcion",
+                "v1",
+                "app",
+                "regiones"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get districts (Comunas)",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://5nnpwr8b-3000.brs.devtunnels.ms/central/dte/fe/recepcion/v1/app/regiones/13/comunas",
+              "protocol": "https",
+              "host": [
+                "5nnpwr8b-3000",
+                "brs",
+                "devtunnels",
+                "ms"
+              ],
+              "path": [
+                "central",
+                "dte",
+                "fe",
+                "recepcion",
+                "v1",
+                "app",
+                "regiones",
+                "13",
+                "comunas"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "SII",
+      "item": [
+        {
+          "name": "Get categories (Rubros)",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://5nnpwr8b-3000.brs.devtunnels.ms/central/dte/fe/recepcion/v1/app/rubros",
+              "protocol": "https",
+              "host": [
+                "5nnpwr8b-3000",
+                "brs",
+                "devtunnels",
+                "ms"
+              ],
+              "path": [
+                "central",
+                "dte",
+                "fe",
+                "recepcion",
+                "v1",
+                "app",
+                "rubros"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get economic activity",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://5nnpwr8b-3000.brs.devtunnels.ms/central/dte/fe/recepcion/v1/app/rubros/1/acteco",
+              "protocol": "https",
+              "host": [
+                "5nnpwr8b-3000",
+                "brs",
+                "devtunnels",
+                "ms"
+              ],
+              "path": [
+                "central",
+                "dte",
+                "fe",
+                "recepcion",
+                "v1",
+                "app",
+                "rubros",
+                "1",
+                "acteco"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

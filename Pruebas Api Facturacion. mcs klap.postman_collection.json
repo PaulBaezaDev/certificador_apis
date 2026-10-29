@@ -1,0 +1,644 @@
+{
+  "info": {
+    "_postman_id": "87b63e92-8c37-4b07-a446-f0a13db7a7d9",
+    "name": "Pruebas Api Facturacion. mcs klap",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "7773046"
+  },
+  "item": [
+    {
+      "name": "DEV",
+      "item": [
+        {
+          "name": "00-.Auth",
+          "item": [
+            {
+              "name": "Login dev",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{  \r\n    \"user\": \"10471336-K\",  \r\n    \"pass\": \"1555\"  \r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://apidev.mcdesaqa.cl/public/auth/web/v2/login",
+                  "protocol": "https",
+                  "host": [
+                    "apidev",
+                    "mcdesaqa",
+                    "cl"
+                  ],
+                  "path": [
+                    "public",
+                    "auth",
+                    "web",
+                    "v2",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "01-.Con Auth (JWT)",
+          "item": []
+        },
+        {
+          "name": "02-.Sin Auth (JWT)",
+          "item": []
+        }
+      ]
+    },
+    {
+      "name": "QA",
+      "item": [
+        {
+          "name": "00-.Auth Copy",
+          "item": [
+            {
+              "name": "Login QA",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{  \r\n    \"user\": \"10471336-K\",  \r\n    \"pass\": \"1555\"  \r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://verticalqa.mcdesaqa.cl/public/auth/web/v2/login",
+                  "protocol": "https",
+                  "host": [
+                    "verticalqa",
+                    "mcdesaqa",
+                    "cl"
+                  ],
+                  "path": [
+                    "public",
+                    "auth",
+                    "web",
+                    "v2",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "01-.Con Auth (JWT)",
+          "item": [
+            {
+              "name": "Consulta",
+              "item": [
+                {
+                  "name": "Consulta folio",
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIiLCJpc3MiOiJBdXRoU2VjdXJpdHlXZWIiLCJzdWIiOiIxMDQ3MTMzNi1LIiwiaWF0IjoxNzg3OTQxNzQ1LCJleHAiOjE3ODc5NzA1NDUsImF1dGhvcml0aWVzIjpbIkFVVEhFTlRJQ0FUSU9OX1BBU1NXT1JEX1JFU0VUIiwiT1JRX0FETUlOSVNUUkFUT1JfVEVSTUlOQUxTX1BBU1NXT1JEX1JFU0VUIiwiT1JRX0FETUlOSVNUUkFUT1JfRVhURVJOQUxfREVWSUNFU19QQVNTV09SRF9SRVNFVCIsIk9SUV9BRE1JTklTVFJBVE9SX0NPTU1FUkNFU19HRVQiLCJPUlFfQURNSU5JU1RSQVRPUl9FWFRFUk5BTF9ERVZJQ0VTX0NSRUFURSIsIkFVVEhFTlRJQ0FUSU9OX0NSRUFURV9VU0VSIiwiT1JRX0FETUlOSVNUUkFUT1JfRVhURVJOQUxfREVWSUNFU19HRVQiLCJPUlFfQURNSU5JU1RSQVRPUl9URVJNSU5BTFNfR0VUIiwiT1JRX0FETUlOIiwiT1JRX0FETUlOSVNUUkFUT1JfQlJBTkNIRVNfT0ZGSUNFU19HRVQiLCJXRUJfTk9STUFMIl0sInNlc3Npb25fZGF0YSI6IntcInVzZXJfaWRcIjoxMzEsXCJzZXNzaW9uX2lkXCI6XCJRT3E3RVJtQkViak9BUWxnaFVkZzFDOGhLOEx1NkNFOVwiLFwiYWNjZXNzZXNcIjowfSIsIm5hbWUiOiIiLCJlbWFpbCI6IiIsImNvcmVfdG9rZW4iOiJleUowZVhBaU9pSktWMVFpTENKaGJHY2lPaUpJVXpJMU5pSjkuZXlKcWRHa2lPaUkzWVRnMVpERmlZek5qWmpNME5EVXpPVEJsT0ROalpqVmlZbUUwWm1VeU55SXNJbWx6Y3lJNklrRjFkR2hUWldOMWNtbDBlVmRsWWlJc0luTjFZaUk2SWpFd05EY3hNek0yTFVzaUxDSnBZWFFpT2pFM09EYzVOREUzTkRVc0ltVjRjQ0k2TVRjNE56azNNRFUwTlN3aWMyVnpjMmx2Ymw5a1lYUmhJam9pZTF3aWRYTmxjbDlwWkZ3aU9qRXpNU3hjSW5ObGMzTnBiMjVmYVdSY0lqcGNJbEZQY1RkRlVtMUNSV0pxVDBGUmJHZG9WV1JuTVVNNGFFczRUSFUyUTBVNVhDSXNYQ0poWTJObGMzTmxjMXdpT2pCOUlpd2libUZ0WlNJNklpSXNJbVZ0WVdsc0lqb2lJbjAubzdsV0pZX0FnX0RNOWlQd1NKX3cwSkdvUWVka3pQcUk2RDFSZVNZako5YyIsInVzZXJfbmFtZSI6IjEwNDcxMzM2LUsiLCJjbGllbnRfaWQiOiIiLCJzY29wZSI6W119.dDbdRSXi_yUgALhUwRsTillmq77NABUDc5aPTrkvYoc",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "https://apiqa-cloud.mcdesaqa.cl/central/dte/fe/consultas/v1/dte/33/106",
+                      "protocol": "https",
+                      "host": [
+                        "apiqa-cloud",
+                        "mcdesaqa",
+                        "cl"
+                      ],
+                      "path": [
+                        "central",
+                        "dte",
+                        "fe",
+                        "consultas",
+                        "v1",
+                        "dte",
+                        "33",
+                        "106"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "Consulta folio sin jwt",
+                  "request": {
+                    "auth": {
+                      "type": "noauth"
+                    },
+                    "method": "POST",
+                    "header": [],
+                    "url": {
+                      "raw": "https://apiqa-cloud.mcdesaqa.cl/central/dte/fe/consultas/v1/app/dte/33/106",
+                      "protocol": "https",
+                      "host": [
+                        "apiqa-cloud",
+                        "mcdesaqa",
+                        "cl"
+                      ],
+                      "path": [
+                        "central",
+                        "dte",
+                        "fe",
+                        "consultas",
+                        "v1",
+                        "app",
+                        "dte",
+                        "33",
+                        "106"
+                      ]
+                    }
+                  },
+                  "response": []
+                }
+              ]
+            },
+            {
+              "name": "Get regiones",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIiLCJpc3MiOiJBdXRoU2VjdXJpdHlXZWIiLCJzdWIiOiIxMDQ3MTMzNi1LIiwiaWF0IjoxNzg3OTM2MTY1LCJleHAiOjE3ODc5NjQ5NjUsImF1dGhvcml0aWVzIjpbIkFVVEhFTlRJQ0FUSU9OX1BBU1NXT1JEX1JFU0VUIiwiT1JRX0FETUlOSVNUUkFUT1JfVEVSTUlOQUxTX1BBU1NXT1JEX1JFU0VUIiwiT1JRX0FETUlOSVNUUkFUT1JfRVhURVJOQUxfREVWSUNFU19QQVNTV09SRF9SRVNFVCIsIk9SUV9BRE1JTklTVFJBVE9SX0NPTU1FUkNFU19HRVQiLCJPUlFfQURNSU5JU1RSQVRPUl9FWFRFUk5BTF9ERVZJQ0VTX0NSRUFURSIsIkFVVEhFTlRJQ0FUSU9OX0NSRUFURV9VU0VSIiwiT1JRX0FETUlOSVNUUkFUT1JfRVhURVJOQUxfREVWSUNFU19HRVQiLCJPUlFfQURNSU5JU1RSQVRPUl9URVJNSU5BTFNfR0VUIiwiT1JRX0FETUlOIiwiT1JRX0FETUlOSVNUUkFUT1JfQlJBTkNIRVNfT0ZGSUNFU19HRVQiLCJXRUJfTk9STUFMIl0sInNlc3Npb25fZGF0YSI6IntcInVzZXJfaWRcIjoxMzEsXCJzZXNzaW9uX2lkXCI6XCJZanlsajBjeTFlbHZDNTlFUDd5N1p4eFUwN0pYdndkTFwiLFwiYWNjZXNzZXNcIjowfSIsIm5hbWUiOiIiLCJlbWFpbCI6IiIsImNvcmVfdG9rZW4iOiJleUowZVhBaU9pSktWMVFpTENKaGJHY2lPaUpJVXpJMU5pSjkuZXlKcWRHa2lPaUl3WTJJNU1EVmpPVFptWldFMFpHWTNZV1E0TkRVMU16aG1OVEJtTlRKa1lpSXNJbWx6Y3lJNklrRjFkR2hUWldOMWNtbDBlVmRsWWlJc0luTjFZaUk2SWpFd05EY3hNek0yTFVzaUxDSnBZWFFpT2pFM09EYzVNell4TmpVc0ltVjRjQ0k2TVRjNE56azJORGsyTlN3aWMyVnpjMmx2Ymw5a1lYUmhJam9pZTF3aWRYTmxjbDlwWkZ3aU9qRXpNU3hjSW5ObGMzTnBiMjVmYVdSY0lqcGNJbGxxZVd4cU1HTjVNV1ZzZGtNMU9VVlFOM2szV25oNFZUQTNTbGgyZDJSTVhDSXNYQ0poWTJObGMzTmxjMXdpT2pCOUlpd2libUZ0WlNJNklpSXNJbVZ0WVdsc0lqb2lJbjAualN4OW5KMU9LaUZ2aXhfYW11VTFuclhkZFpPdEc2UGdNQ1k5UmF4XzZ4YyIsInVzZXJfbmFtZSI6IjEwNDcxMzM2LUsiLCJjbGllbnRfaWQiOiIiLCJzY29wZSI6W119.0ttGhSCWLJpF9J85Yx9sp2ErKYegeURxet4tmG9VjU0",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "https://apiqa-cloud.mcdesaqa.cl/central/dte/fe/recepcion/v1/regiones",
+                  "protocol": "https",
+                  "host": [
+                    "apiqa-cloud",
+                    "mcdesaqa",
+                    "cl"
+                  ],
+                  "path": [
+                    "central",
+                    "dte",
+                    "fe",
+                    "recepcion",
+                    "v1",
+                    "regiones"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get rubros",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIiLCJpc3MiOiJBdXRoU2VjdXJpdHlXZWIiLCJzdWIiOiIxMDQ3MTMzNi1LIiwiaWF0IjoxNzg3ODU3MTA1LCJleHAiOjE3ODc4ODU5MDUsImF1dGhvcml0aWVzIjpbIkFVVEhFTlRJQ0FUSU9OX1BBU1NXT1JEX1JFU0VUIiwiT1JRX0FETUlOSVNUUkFUT1JfVEVSTUlOQUxTX1BBU1NXT1JEX1JFU0VUIiwiT1JRX0FETUlOSVNUUkFUT1JfRVhURVJOQUxfREVWSUNFU19QQVNTV09SRF9SRVNFVCIsIk9SUV9BRE1JTklTVFJBVE9SX0NPTU1FUkNFU19HRVQiLCJPUlFfQURNSU5JU1RSQVRPUl9FWFRFUk5BTF9ERVZJQ0VTX0NSRUFURSIsIkFVVEhFTlRJQ0FUSU9OX0NSRUFURV9VU0VSIiwiT1JRX0FETUlOSVNUUkFUT1JfRVhURVJOQUxfREVWSUNFU19HRVQiLCJPUlFfQURNSU5JU1RSQVRPUl9URVJNSU5BTFNfR0VUIiwiT1JRX0FETUlOIiwiT1JRX0FETUlOSVNUUkFUT1JfQlJBTkNIRVNfT0ZGSUNFU19HRVQiLCJXRUJfTk9STUFMIl0sInNlc3Npb25fZGF0YSI6IntcInVzZXJfaWRcIjoxMzEsXCJzZXNzaW9uX2lkXCI6XCJETHliWkVqTUZvUGZJekJNT1Y5NWVFVFA3UkpKMm80b1wiLFwiYWNjZXNzZXNcIjowfSIsIm5hbWUiOiIiLCJlbWFpbCI6IiIsImNvcmVfdG9rZW4iOiJleUowZVhBaU9pSktWMVFpTENKaGJHY2lPaUpJVXpJMU5pSjkuZXlKcWRHa2lPaUpqTmpVME56STBOMlJpWm1FME0yRmpPR0ppWmpjM1pqSmpZemd6TmpCaE5DSXNJbWx6Y3lJNklrRjFkR2hUWldOMWNtbDBlVmRsWWlJc0luTjFZaUk2SWpFd05EY3hNek0yTFVzaUxDSnBZWFFpT2pFM09EYzROVGN4TURVc0ltVjRjQ0k2TVRjNE56ZzROVGt3TlN3aWMyVnpjMmx2Ymw5a1lYUmhJam9pZTF3aWRYTmxjbDlwWkZ3aU9qRXpNU3hjSW5ObGMzTnBiMjVmYVdSY0lqcGNJa1JNZVdKYVJXcE5SbTlRWmtsNlFrMVBWamsxWlVWVVVEZFNTa295YnpSdlhDSXNYQ0poWTJObGMzTmxjMXdpT2pCOUlpd2libUZ0WlNJNklpSXNJbVZ0WVdsc0lqb2lJbjAuYUpScmM4QWRvOGNYR0M0WW1kLVpRSXZYNGhsRjRsakpzRVJDUWhFUDF5TSIsInVzZXJfbmFtZSI6IjEwNDcxMzM2LUsiLCJjbGllbnRfaWQiOiIiLCJzY29wZSI6W119.fAa_vX6VzjqwE-lxNgy5mUUmhEr8YUUhDdubG1jcw4Q",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "https://apiqa-cloud.mcdesaqa.cl/central/dte/fe/recepcion/v1/app/rubros",
+                  "protocol": "https",
+                  "host": [
+                    "apiqa-cloud",
+                    "mcdesaqa",
+                    "cl"
+                  ],
+                  "path": [
+                    "central",
+                    "dte",
+                    "fe",
+                    "recepcion",
+                    "v1",
+                    "app",
+                    "rubros"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Camino bonito Emision 33",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIiLCJpc3MiOiJBdXRoU2VjdXJpdHlXZWIiLCJzdWIiOiIxMDQ3MTMzNi1LIiwiaWF0IjoxNzg3OTQxNzQ1LCJleHAiOjE3ODc5NzA1NDUsImF1dGhvcml0aWVzIjpbIkFVVEhFTlRJQ0FUSU9OX1BBU1NXT1JEX1JFU0VUIiwiT1JRX0FETUlOSVNUUkFUT1JfVEVSTUlOQUxTX1BBU1NXT1JEX1JFU0VUIiwiT1JRX0FETUlOSVNUUkFUT1JfRVhURVJOQUxfREVWSUNFU19QQVNTV09SRF9SRVNFVCIsIk9SUV9BRE1JTklTVFJBVE9SX0NPTU1FUkNFU19HRVQiLCJPUlFfQURNSU5JU1RSQVRPUl9FWFRFUk5BTF9ERVZJQ0VTX0NSRUFURSIsIkFVVEhFTlRJQ0FUSU9OX0NSRUFURV9VU0VSIiwiT1JRX0FETUlOSVNUUkFUT1JfRVhURVJOQUxfREVWSUNFU19HRVQiLCJPUlFfQURNSU5JU1RSQVRPUl9URVJNSU5BTFNfR0VUIiwiT1JRX0FETUlOIiwiT1JRX0FETUlOSVNUUkFUT1JfQlJBTkNIRVNfT0ZGSUNFU19HRVQiLCJXRUJfTk9STUFMIl0sInNlc3Npb25fZGF0YSI6IntcInVzZXJfaWRcIjoxMzEsXCJzZXNzaW9uX2lkXCI6XCJRT3E3RVJtQkViak9BUWxnaFVkZzFDOGhLOEx1NkNFOVwiLFwiYWNjZXNzZXNcIjowfSIsIm5hbWUiOiIiLCJlbWFpbCI6IiIsImNvcmVfdG9rZW4iOiJleUowZVhBaU9pSktWMVFpTENKaGJHY2lPaUpJVXpJMU5pSjkuZXlKcWRHa2lPaUkzWVRnMVpERmlZek5qWmpNME5EVXpPVEJsT0ROalpqVmlZbUUwWm1VeU55SXNJbWx6Y3lJNklrRjFkR2hUWldOMWNtbDBlVmRsWWlJc0luTjFZaUk2SWpFd05EY3hNek0yTFVzaUxDSnBZWFFpT2pFM09EYzVOREUzTkRVc0ltVjRjQ0k2TVRjNE56azNNRFUwTlN3aWMyVnpjMmx2Ymw5a1lYUmhJam9pZTF3aWRYTmxjbDlwWkZ3aU9qRXpNU3hjSW5ObGMzTnBiMjVmYVdSY0lqcGNJbEZQY1RkRlVtMUNSV0pxVDBGUmJHZG9WV1JuTVVNNGFFczRUSFUyUTBVNVhDSXNYQ0poWTJObGMzTmxjMXdpT2pCOUlpd2libUZ0WlNJNklpSXNJbVZ0WVdsc0lqb2lJbjAubzdsV0pZX0FnX0RNOWlQd1NKX3cwSkdvUWVka3pQcUk2RDFSZVNZako5YyIsInVzZXJfbmFtZSI6IjEwNDcxMzM2LUsiLCJjbGllbnRfaWQiOiIiLCJzY29wZSI6W119.dDbdRSXi_yUgALhUwRsTillmq77NABUDc5aPTrkvYoc",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n\t\"rutEmisor\": \"10471336-K\",\r\n\t\"tipoDte\": 33,\r\n\t\"receptor\": {\r\n\t\t\"rut\": \"26461274-8\",\r\n\t\t\"razonSocial\": \"Empresa Receptora SpA\",\r\n\t\t\"giro\": 659,\r\n\t\t\"direccion\": \"Av. Providencia 1234\",\r\n\t\t\"comuna\": 4102,\r\n\t\t\"email\": \"factura@empresa.cl\",\r\n\t\t\"telefono\": \"92323420\"\r\n\t},\r\n\t\"items\": [\r\n\t\t{\r\n\t\t\t\"numeroLinea\": 1,\r\n\t\t\t\"nombreItem\": \"Consultoría TI\",\r\n\t\t\t\"descripcion\": \"Desarrollo aplicación Angular v22\",\r\n\t\t\t\"cantidad\": 10,\r\n\t\t\t\"precioUnitarioNeto\": 50000,\r\n\t\t\t\"movimientoItem\": {\r\n\t\t\t\t\"tipo\": \"D\",\r\n\t\t\t\t\"tipoValor\": \"%\",\r\n\t\t\t\t\"porcentaje\": 10,\r\n\t\t\t\t\"monto\": 50000\r\n\t\t\t},\r\n\t\t\t\"monto\": 450000,\r\n\t\t\t\"codigoItem\": \"SKU-12321\",\r\n\t\t\t\"unidadMedida\": \"KG\"\r\n\t\t},\r\n\t\t{\r\n\t\t\t\"numeroLinea\": 2,\r\n\t\t\t\"nombreItem\": \"Licencia software\",\r\n\t\t\t\"cantidad\": 2,\r\n\t\t\t\"precioUnitarioNeto\": 80000,\r\n\t\t\t\"monto\": 160000\r\n\t\t}\r\n\t],\r\n\t\"montoNeto\": 610000,\r\n\t\"montoIVA\": 115900,\r\n\t\"montoTotal\": 725900\r\n} ",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://apiqa-cloud.mcdesaqa.cl/central/dte/fe/recepcion/v1/factura",
+                  "protocol": "https",
+                  "host": [
+                    "apiqa-cloud",
+                    "mcdesaqa",
+                    "cl"
+                  ],
+                  "path": [
+                    "central",
+                    "dte",
+                    "fe",
+                    "recepcion",
+                    "v1",
+                    "factura"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Camino bonito Emision 61 Nota credito",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIiLCJpc3MiOiJBdXRoU2VjdXJpdHlXZWIiLCJzdWIiOiIxMDQ3MTMzNi1LIiwiaWF0IjoxNzg3OTQ0OTgxLCJleHAiOjE3ODc5NzM3ODEsImF1dGhvcml0aWVzIjpbIkFVVEhFTlRJQ0FUSU9OX1BBU1NXT1JEX1JFU0VUIiwiT1JRX0FETUlOSVNUUkFUT1JfVEVSTUlOQUxTX1BBU1NXT1JEX1JFU0VUIiwiT1JRX0FETUlOSVNUUkFUT1JfRVhURVJOQUxfREVWSUNFU19QQVNTV09SRF9SRVNFVCIsIk9SUV9BRE1JTklTVFJBVE9SX0NPTU1FUkNFU19HRVQiLCJPUlFfQURNSU5JU1RSQVRPUl9FWFRFUk5BTF9ERVZJQ0VTX0NSRUFURSIsIkFVVEhFTlRJQ0FUSU9OX0NSRUFURV9VU0VSIiwiT1JRX0FETUlOSVNUUkFUT1JfRVhURVJOQUxfREVWSUNFU19HRVQiLCJPUlFfQURNSU5JU1RSQVRPUl9URVJNSU5BTFNfR0VUIiwiT1JRX0FETUlOIiwiT1JRX0FETUlOSVNUUkFUT1JfQlJBTkNIRVNfT0ZGSUNFU19HRVQiLCJXRUJfTk9STUFMIl0sInNlc3Npb25fZGF0YSI6IntcInVzZXJfaWRcIjoxMzEsXCJzZXNzaW9uX2lkXCI6XCJvUEJNaGhIU2R6TklMY3k4VjhoWXl5NmZidU1TbmphNlwiLFwiYWNjZXNzZXNcIjowfSIsIm5hbWUiOiIiLCJlbWFpbCI6IiIsImNvcmVfdG9rZW4iOiJleUowZVhBaU9pSktWMVFpTENKaGJHY2lPaUpJVXpJMU5pSjkuZXlKcWRHa2lPaUprWkRnNU9HRXpNVFJtWkdFME1XSXlZV001TXpFd1kyRmxOV1kwWkdKbE5DSXNJbWx6Y3lJNklrRjFkR2hUWldOMWNtbDBlVmRsWWlJc0luTjFZaUk2SWpFd05EY3hNek0yTFVzaUxDSnBZWFFpT2pFM09EYzVORFE1T0RFc0ltVjRjQ0k2TVRjNE56azNNemM0TVN3aWMyVnpjMmx2Ymw5a1lYUmhJam9pZTF3aWRYTmxjbDlwWkZ3aU9qRXpNU3hjSW5ObGMzTnBiMjVmYVdSY0lqcGNJbTlRUWsxb2FFaFRaSHBPU1V4amVUaFdPR2haZVhrMlptSjFUVk51YW1FMlhDSXNYQ0poWTJObGMzTmxjMXdpT2pCOUlpd2libUZ0WlNJNklpSXNJbVZ0WVdsc0lqb2lJbjAuOXF6U2RTSDZUZWdBWkh4bjlGbzJQQzZSR01ObVFUdVJlSTZwTDFsbUhFZyIsInVzZXJfbmFtZSI6IjEwNDcxMzM2LUsiLCJjbGllbnRfaWQiOiIiLCJzY29wZSI6W119.MvZP3GQ-0L9QY9gw4bhSMVvPWvJrFOeQEkWMEb5xpbM",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n\t\"codigoReferencia\": 1,\r\n\t\"razonReferencia\": \"Anula documento por error en datos del receptor\",\r\n\t\"rutEmisor\": \"10471336-K\",\r\n\t\"receptor\": {\r\n\t\t\"rut\": \"26461274-8\",\r\n\t\t\"razonSocial\": \"Empresa Receptora SpA\",\r\n\t\t\"giro\": \"Consultores en Informática\",\r\n\t\t\"direccion\": \"Av. Providencia 1234\",\r\n\t\t\"comuna\": \"Providencia\",\r\n\t\t\"email\": \"factura@empresa.cl\",\r\n\t\t\"telefono\": \"912345678\"\r\n\t},\r\n\t\"datosFactura\": {\r\n\t\t\"tipoDte\": 33,\r\n\t\t\"folio\": 106,\r\n\t\t\"items\": [\r\n\t\t\t{\r\n\t\t\t\t\"numeroLinea\": 1,\r\n\t\t\t\t\"nombreItem\": \"Consultoría TI\",\r\n\t\t\t\t\"cantidad\": 10,\r\n\t\t\t\t\"precioUnitarioNeto\": 50000,\r\n\t\t\t\t\"monto\": 500000\r\n\t\t\t}\r\n\t\t],\r\n\t\"montoNeto\": 610000,\r\n\t\"montoIVA\": 115900,\r\n\t\"montoTotal\": 725900\r\n\t}\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://apiqa-cloud.mcdesaqa.cl/central/dte/fe/recepcion/v1/nota\u0002-credito",
+                  "protocol": "https",
+                  "host": [
+                    "apiqa-cloud",
+                    "mcdesaqa",
+                    "cl"
+                  ],
+                  "path": [
+                    "central",
+                    "dte",
+                    "fe",
+                    "recepcion",
+                    "v1",
+                    "nota\u0002-credito"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Camino bonito Emision 34",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIiLCJpc3MiOiJBdXRoU2VjdXJpdHlXZWIiLCJzdWIiOiIxMDQ3MTMzNi1LIiwiaWF0IjoxNzg3OTMzNTI0LCJleHAiOjE3ODc5NjIzMjQsImF1dGhvcml0aWVzIjpbIkFVVEhFTlRJQ0FUSU9OX1BBU1NXT1JEX1JFU0VUIiwiT1JRX0FETUlOSVNUUkFUT1JfVEVSTUlOQUxTX1BBU1NXT1JEX1JFU0VUIiwiT1JRX0FETUlOSVNUUkFUT1JfRVhURVJOQUxfREVWSUNFU19QQVNTV09SRF9SRVNFVCIsIk9SUV9BRE1JTklTVFJBVE9SX0NPTU1FUkNFU19HRVQiLCJPUlFfQURNSU5JU1RSQVRPUl9FWFRFUk5BTF9ERVZJQ0VTX0NSRUFURSIsIkFVVEhFTlRJQ0FUSU9OX0NSRUFURV9VU0VSIiwiT1JRX0FETUlOSVNUUkFUT1JfRVhURVJOQUxfREVWSUNFU19HRVQiLCJPUlFfQURNSU5JU1RSQVRPUl9URVJNSU5BTFNfR0VUIiwiT1JRX0FETUlOIiwiT1JRX0FETUlOSVNUUkFUT1JfQlJBTkNIRVNfT0ZGSUNFU19HRVQiLCJXRUJfTk9STUFMIl0sInNlc3Npb25fZGF0YSI6IntcInVzZXJfaWRcIjoxMzEsXCJzZXNzaW9uX2lkXCI6XCI2bnBRdEI5RFg1Q0doVmN1S01WSTJBV0xvWEdhdWpkWFwiLFwiYWNjZXNzZXNcIjowfSIsIm5hbWUiOiIiLCJlbWFpbCI6IiIsImNvcmVfdG9rZW4iOiJleUowZVhBaU9pSktWMVFpTENKaGJHY2lPaUpJVXpJMU5pSjkuZXlKcWRHa2lPaUkwWlRNM1lXSXlaR0UzWXpjME4yVXdPREkxT0RFMk0yUTVaakZtT0dOaFlpSXNJbWx6Y3lJNklrRjFkR2hUWldOMWNtbDBlVmRsWWlJc0luTjFZaUk2SWpFd05EY3hNek0yTFVzaUxDSnBZWFFpT2pFM09EYzVNek0xTWpRc0ltVjRjQ0k2TVRjNE56azJNak15TkN3aWMyVnpjMmx2Ymw5a1lYUmhJam9pZTF3aWRYTmxjbDlwWkZ3aU9qRXpNU3hjSW5ObGMzTnBiMjVmYVdSY0lqcGNJalp1Y0ZGMFFqbEVXRFZEUjJoV1kzVkxUVlpKTWtGWFRHOVlSMkYxYW1SWVhDSXNYQ0poWTJObGMzTmxjMXdpT2pCOUlpd2libUZ0WlNJNklpSXNJbVZ0WVdsc0lqb2lJbjAuUGlyckR1WDVHTURVM1IwM1Q2VDhaZUJwd1k4X2dWdW9wM1Q1Q3JxdmFKayIsInVzZXJfbmFtZSI6IjEwNDcxMzM2LUsiLCJjbGllbnRfaWQiOiIiLCJzY29wZSI6W119.-prPRRcTW1AJCoFbkXu2U5LsmoP15EcYSTCUCMujUoU",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n\t\"rutEmisor\": \"10471336-K\",\r\n\t\"tipoDte\": 34,\r\n\t\"receptor\": {\r\n\t\t\"rut\": \"26461274-8\",\r\n\t\t\"razonSocial\": \"Clínica Salud Integral\",\r\n\t\t\"giro\": 659,\r\n\t\t\"direccion\": \"Av. Vitacura 5000\",\r\n\t\t\"comuna\": 4102,\r\n\t\t\"email\": \"finanzas@saludintegral.cl\"\r\n\t},\r\n\t\"items\": [\r\n\t\t{\r\n\t\t\t\"numeroLinea\": 1,\r\n\t\t\t\"nombreItem\": \"Consulta médica general\",\r\n\t\t\t\"cantidad\": 1,\r\n\t\t\t\"precioUnitarioNeto\": 45000,\r\n\t\t\t\"monto\": 45000\r\n\t\t}\r\n\t],\r\n\t\"montoTotal\": 45000\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://apiqa-cloud.mcdesaqa.cl/central/dte/fe/recepcion/v1/factura",
+                  "protocol": "https",
+                  "host": [
+                    "apiqa-cloud",
+                    "mcdesaqa",
+                    "cl"
+                  ],
+                  "path": [
+                    "central",
+                    "dte",
+                    "fe",
+                    "recepcion",
+                    "v1",
+                    "factura"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Info_Region",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIiLCJpc3MiOiJBdXRoU2VjdXJpdHlXZWIiLCJzdWIiOiIxMDQ3MTMzNi1LIiwiaWF0IjoxNzg3OTM2MTY1LCJleHAiOjE3ODc5NjQ5NjUsImF1dGhvcml0aWVzIjpbIkFVVEhFTlRJQ0FUSU9OX1BBU1NXT1JEX1JFU0VUIiwiT1JRX0FETUlOSVNUUkFUT1JfVEVSTUlOQUxTX1BBU1NXT1JEX1JFU0VUIiwiT1JRX0FETUlOSVNUUkFUT1JfRVhURVJOQUxfREVWSUNFU19QQVNTV09SRF9SRVNFVCIsIk9SUV9BRE1JTklTVFJBVE9SX0NPTU1FUkNFU19HRVQiLCJPUlFfQURNSU5JU1RSQVRPUl9FWFRFUk5BTF9ERVZJQ0VTX0NSRUFURSIsIkFVVEhFTlRJQ0FUSU9OX0NSRUFURV9VU0VSIiwiT1JRX0FETUlOSVNUUkFUT1JfRVhURVJOQUxfREVWSUNFU19HRVQiLCJPUlFfQURNSU5JU1RSQVRPUl9URVJNSU5BTFNfR0VUIiwiT1JRX0FETUlOIiwiT1JRX0FETUlOSVNUUkFUT1JfQlJBTkNIRVNfT0ZGSUNFU19HRVQiLCJXRUJfTk9STUFMIl0sInNlc3Npb25fZGF0YSI6IntcInVzZXJfaWRcIjoxMzEsXCJzZXNzaW9uX2lkXCI6XCJZanlsajBjeTFlbHZDNTlFUDd5N1p4eFUwN0pYdndkTFwiLFwiYWNjZXNzZXNcIjowfSIsIm5hbWUiOiIiLCJlbWFpbCI6IiIsImNvcmVfdG9rZW4iOiJleUowZVhBaU9pSktWMVFpTENKaGJHY2lPaUpJVXpJMU5pSjkuZXlKcWRHa2lPaUl3WTJJNU1EVmpPVFptWldFMFpHWTNZV1E0TkRVMU16aG1OVEJtTlRKa1lpSXNJbWx6Y3lJNklrRjFkR2hUWldOMWNtbDBlVmRsWWlJc0luTjFZaUk2SWpFd05EY3hNek0yTFVzaUxDSnBZWFFpT2pFM09EYzVNell4TmpVc0ltVjRjQ0k2TVRjNE56azJORGsyTlN3aWMyVnpjMmx2Ymw5a1lYUmhJam9pZTF3aWRYTmxjbDlwWkZ3aU9qRXpNU3hjSW5ObGMzTnBiMjVmYVdSY0lqcGNJbGxxZVd4cU1HTjVNV1ZzZGtNMU9VVlFOM2szV25oNFZUQTNTbGgyZDJSTVhDSXNYQ0poWTJObGMzTmxjMXdpT2pCOUlpd2libUZ0WlNJNklpSXNJbVZ0WVdsc0lqb2lJbjAualN4OW5KMU9LaUZ2aXhfYW11VTFuclhkZFpPdEc2UGdNQ1k5UmF4XzZ4YyIsInVzZXJfbmFtZSI6IjEwNDcxMzM2LUsiLCJjbGllbnRfaWQiOiIiLCJzY29wZSI6W119.0ttGhSCWLJpF9J85Yx9sp2ErKYegeURxet4tmG9VjU0",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{facturaUrl}}v1/regiones/4/comunas",
+                  "host": [
+                    "{{facturaUrl}}v1"
+                  ],
+                  "path": [
+                    "regiones",
+                    "4",
+                    "comunas"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "info_Rubro",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIiLCJpc3MiOiJBdXRoU2VjdXJpdHlXZWIiLCJzdWIiOiIxMDQ3MTMzNi1LIiwiaWF0IjoxNzg3OTM2OTc2LCJleHAiOjE3ODc5NjU3NzYsImF1dGhvcml0aWVzIjpbIkFVVEhFTlRJQ0FUSU9OX1BBU1NXT1JEX1JFU0VUIiwiT1JRX0FETUlOSVNUUkFUT1JfVEVSTUlOQUxTX1BBU1NXT1JEX1JFU0VUIiwiT1JRX0FETUlOSVNUUkFUT1JfRVhURVJOQUxfREVWSUNFU19QQVNTV09SRF9SRVNFVCIsIk9SUV9BRE1JTklTVFJBVE9SX0NPTU1FUkNFU19HRVQiLCJPUlFfQURNSU5JU1RSQVRPUl9FWFRFUk5BTF9ERVZJQ0VTX0NSRUFURSIsIkFVVEhFTlRJQ0FUSU9OX0NSRUFURV9VU0VSIiwiT1JRX0FETUlOSVNUUkFUT1JfRVhURVJOQUxfREVWSUNFU19HRVQiLCJPUlFfQURNSU5JU1RSQVRPUl9URVJNSU5BTFNfR0VUIiwiT1JRX0FETUlOIiwiT1JRX0FETUlOSVNUUkFUT1JfQlJBTkNIRVNfT0ZGSUNFU19HRVQiLCJXRUJfTk9STUFMIl0sInNlc3Npb25fZGF0YSI6IntcInVzZXJfaWRcIjoxMzEsXCJzZXNzaW9uX2lkXCI6XCJhM1BYMktJV3JJOW9hdmVERDdGdnZIcnlhOXZGN2pCVFwiLFwiYWNjZXNzZXNcIjowfSIsIm5hbWUiOiIiLCJlbWFpbCI6IiIsImNvcmVfdG9rZW4iOiJleUowZVhBaU9pSktWMVFpTENKaGJHY2lPaUpJVXpJMU5pSjkuZXlKcWRHa2lPaUk1TUROaU1HVXlZMkprT0RFME5XUTFPR1V6TWpaa01qSTRZV1V3WVRCa09TSXNJbWx6Y3lJNklrRjFkR2hUWldOMWNtbDBlVmRsWWlJc0luTjFZaUk2SWpFd05EY3hNek0yTFVzaUxDSnBZWFFpT2pFM09EYzVNelk1TnpZc0ltVjRjQ0k2TVRjNE56azJOVGMzTml3aWMyVnpjMmx2Ymw5a1lYUmhJam9pZTF3aWRYTmxjbDlwWkZ3aU9qRXpNU3hjSW5ObGMzTnBiMjVmYVdSY0lqcGNJbUV6VUZneVMwbFhja2s1YjJGMlpVUkVOMFoyZGtoeWVXRTVka1kzYWtKVVhDSXNYQ0poWTJObGMzTmxjMXdpT2pCOUlpd2libUZ0WlNJNklpSXNJbVZ0WVdsc0lqb2lJbjAueUZWZXBzODlLRXp3YV81azVtSFYyRUJna01UVnhMamlYNjJDdXlpUVpTOCIsInVzZXJfbmFtZSI6IjEwNDcxMzM2LUsiLCJjbGllbnRfaWQiOiIiLCJzY29wZSI6W119.BOqlf6DKivuu8hmNBewxwE2vU58m-McSUXEfHJJG7ng",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{facturaUrl}}v1/rubros/19/acteco",
+                  "host": [
+                    "{{facturaUrl}}v1"
+                  ],
+                  "path": [
+                    "rubros",
+                    "19",
+                    "acteco"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "02-.Sin Auth (JWT)",
+          "item": [
+            {
+              "name": "Get regiones",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "https://apiqa-cloud.mcdesaqa.cl/central/dte/fe/recepcion/v1/app/regiones",
+                  "protocol": "https",
+                  "host": [
+                    "apiqa-cloud",
+                    "mcdesaqa",
+                    "cl"
+                  ],
+                  "path": [
+                    "central",
+                    "dte",
+                    "fe",
+                    "recepcion",
+                    "v1",
+                    "app",
+                    "regiones"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get rubros",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "https://apiqa-cloud.mcdesaqa.cl/central/dte/fe/recepcion/v1/app/rubros",
+                  "protocol": "https",
+                  "host": [
+                    "apiqa-cloud",
+                    "mcdesaqa",
+                    "cl"
+                  ],
+                  "path": [
+                    "central",
+                    "dte",
+                    "fe",
+                    "recepcion",
+                    "v1",
+                    "app",
+                    "rubros"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Camino bonito Emision 33",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n\t\"rutEmisor\": \"10471336-K\",\r\n\t\"tipoDte\": 33,\r\n\t\"receptor\": {\r\n\t\t\"rut\": \"26461274-8\",\r\n\t\t\"razonSocial\": \"Empresa Receptora SpA\",\r\n\t\t\"giro\": 659,\r\n\t\t\"direccion\": \"Av. Providencia 1234\",\r\n\t\t\"comuna\": 4102,\r\n\t\t\"email\": \"factura@empresa.cl\",\r\n\t\t\"telefono\": \"92323420\"\r\n\t},\r\n\t\"items\": [\r\n\t\t{\r\n\t\t\t\"numeroLinea\": 1,\r\n\t\t\t\"nombreItem\": \"Consultoría TI\",\r\n\t\t\t\"descripcion\": \"Desarrollo aplicación Angular v22\",\r\n\t\t\t\"cantidad\": 10,\r\n\t\t\t\"precioUnitarioNeto\": 50000,\r\n\t\t\t\"movimientoItem\": {\r\n\t\t\t\t\"tipo\": \"D\",\r\n\t\t\t\t\"tipoValor\": \"%\",\r\n\t\t\t\t\"porcentaje\": 10,\r\n\t\t\t\t\"monto\": 50000\r\n\t\t\t},\r\n\t\t\t\"monto\": 450000,\r\n\t\t\t\"codigoItem\": \"SKU-12321\",\r\n\t\t\t\"unidadMedida\": \"KG\"\r\n\t\t},\r\n\t\t{\r\n\t\t\t\"numeroLinea\": 2,\r\n\t\t\t\"nombreItem\": \"Licencia software\",\r\n\t\t\t\"cantidad\": 2,\r\n\t\t\t\"precioUnitarioNeto\": 80000,\r\n\t\t\t\"monto\": 160000\r\n\t\t}\r\n\t],\r\n\t\"montoNeto\": 610000,\r\n\t\"montoIVA\": 115900,\r\n\t\"montoTotal\": 725900\r\n} ",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://apiqa-cloud.mcdesaqa.cl/central/dte/fe/recepcion/v1/app/factura",
+                  "protocol": "https",
+                  "host": [
+                    "apiqa-cloud",
+                    "mcdesaqa",
+                    "cl"
+                  ],
+                  "path": [
+                    "central",
+                    "dte",
+                    "fe",
+                    "recepcion",
+                    "v1",
+                    "app",
+                    "factura"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Camino bonito Emision 34",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n\t\"rutEmisor\": \"10471336-K\",\r\n\t\"tipoDte\": 34,\r\n\t\"receptor\": {\r\n\t\t\"rut\": \"26461274-8\",\r\n\t\t\"razonSocial\": \"Clínica Salud Integral\",\r\n\t\t\"giro\": 659,\r\n\t\t\"direccion\": \"Av. Vitacura 5000\",\r\n\t\t\"comuna\": 4102,\r\n\t\t\"email\": \"finanzas@saludintegral.cl\"\r\n\t},\r\n\t\"items\": [\r\n\t\t{\r\n\t\t\t\"numeroLinea\": 1,\r\n\t\t\t\"nombreItem\": \"Consulta médica general\",\r\n\t\t\t\"cantidad\": 1,\r\n\t\t\t\"precioUnitarioNeto\": 45000,\r\n\t\t\t\"monto\": 45000\r\n\t\t}\r\n\t],\r\n\t\"montoTotal\": 45000\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://apiqa-cloud.mcdesaqa.cl/central/dte/fe/recepcion/v1/app/factura",
+                  "protocol": "https",
+                  "host": [
+                    "apiqa-cloud",
+                    "mcdesaqa",
+                    "cl"
+                  ],
+                  "path": [
+                    "central",
+                    "dte",
+                    "fe",
+                    "recepcion",
+                    "v1",
+                    "app",
+                    "factura"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Info_Region",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "https://apiqa-cloud.mcdesaqa.cl/central/dte/fe/recepcion/v1/app/regiones/4/comunas",
+                  "protocol": "https",
+                  "host": [
+                    "apiqa-cloud",
+                    "mcdesaqa",
+                    "cl"
+                  ],
+                  "path": [
+                    "central",
+                    "dte",
+                    "fe",
+                    "recepcion",
+                    "v1",
+                    "app",
+                    "regiones",
+                    "4",
+                    "comunas"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "info_Rubro",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "https://apiqa-cloud.mcdesaqa.cl/central/dte/fe/recepcion/v1/app/rubros/19/acteco",
+                  "protocol": "https",
+                  "host": [
+                    "apiqa-cloud",
+                    "mcdesaqa",
+                    "cl"
+                  ],
+                  "path": [
+                    "central",
+                    "dte",
+                    "fe",
+                    "recepcion",
+                    "v1",
+                    "app",
+                    "rubros",
+                    "19",
+                    "acteco"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
